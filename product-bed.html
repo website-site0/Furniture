@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oak Haven Bed Frame — Holloway & Oak</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1C1815;
+    --ink-soft:#2A241F;
+    --parchment:#E8DFCB;
+    --parchment-dim:#DCD2B8;
+    --brass:#B08D57;
+    --brass-bright:#C9A876;
+    --line: rgba(232,223,203,0.22);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--ink);
+    color:var(--parchment);
+    font-family:'Instrument Sans', sans-serif;
+    overflow-x:hidden;
+    padding-top: 100px;
+  }
+  .serif{font-family:'Fraunces', serif;}
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  .wrap{max-width:1280px;margin:0 auto;padding:0 40px;}
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    padding:26px 0;
+    background: var(--ink);
+    border-bottom: 1px solid var(--line);
+  }
+  nav{display:flex;align-items:center;justify-content:space-between;}
+  .logo{font-family:'Fraunces', serif;font-size:22px;letter-spacing:0.02em;font-weight:500;text-decoration:none;color:inherit;}
+  .logo span{color:var(--brass-bright);font-style:italic;}
+  .back-link {
+    font-size: 13px;
+    text-decoration: none;
+    color: var(--parchment-dim);
+    transition: color 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .back-link:hover { color: var(--brass-bright); }
+
+  /* ---------- PRODUCT CONTAINER ---------- */
+  .product-container {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 60px;
+    padding: 60px 0;
+  }
+
+  /* --- LEFT COLUMN: CAROUSEL --- */
+  .carousel-wrapper {
+    position: relative;
+    width: 100%;
+  }
+  .carousel-viewport {
+    width: 100%;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: #111;
+  }
+  .carousel-track {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  .carousel-slide {
+    min-width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  .carousel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.85) contrast(1.02);
+    display: block;
+    transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  /* Elegant slow-zoom on active hover */
+  .carousel-wrapper:hover .carousel-slide img {
+    transform: scale(1.03);
+  }
+  
+  /* Carousel Controls */
+  .carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(28, 24, 21, 0.75);
+    backdrop-filter: blur(4px);
+    border: 1px solid var(--line);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    color: var(--parchment);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: all 0.3s ease;
+  }
+  .carousel-btn:hover {
+    border-color: var(--brass-bright);
+    color: var(--brass-bright);
+    background: var(--ink);
+  }
+  .carousel-btn.prev { left: 20px; }
+  .carousel-btn.next { right: 20px; }
+  
+  /* Carousel Dots */
+  .carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .dot {
+    width: 6px;
+    height: 6px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  .dot.active {
+    background: var(--brass-bright);
+    border-color: var(--brass-bright);
+    transform: scale(1.3);
+  }
+
+  /* --- RIGHT COLUMN: DETAILS --- */
+  .product-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .product-eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--brass-bright);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .product-main-title {
+    font-size: clamp(32px, 3.5vw, 48px);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+  .product-price {
+    font-size: 24px;
+    color: var(--brass-bright);
+    margin-bottom: 30px;
+    font-weight: 400;
+  }
+  .product-description {
+    font-size: 15px;
+    color: var(--parchment-dim);
+    line-height: 1.7;
+    margin-bottom: 35px;
+    font-weight: 300;
+  }
+  
+  /* Specs */
+  .product-specs {
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+    margin-bottom: 40px;
+  }
+  .spec-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    font-size: 13.5px;
+    border-bottom: 1px solid rgba(232,223,203,0.05);
+  }
+  .spec-label { color: var(--parchment-dim); font-weight: 300; }
+  .spec-value { color: var(--parchment); font-weight: 400; }
+
+  /* INSTAGRAM ORDER BUTTON */
+  .instagram-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 18px;
+    background: transparent;
+    border: 1px solid var(--brass);
+    color: var(--parchment);
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .instagram-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+  .instagram-btn:hover {
+    border-color: var(--brass-bright);
+    background: var(--brass);
+    color: var(--ink);
+    box-shadow: 0 10px 25px rgba(201, 168, 118, 0.15);
+    transform: translateY(-2px);
+  }
+
+  /* ---------- REVIEWS SECTION ---------- */
+  .reviews-section {
+    padding: 100px 0 140px 0;
+    border-top: 1px solid var(--line);
+    margin-top: 60px;
+  }
+  .reviews-title {
+    font-size: 28px;
+    font-weight: 300;
+    margin-bottom: 40px;
+    letter-spacing: -0.01em;
+  }
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+  }
+  .review-card {
+    background: var(--ink-soft);
+    border: 1px solid var(--line);
+    padding: 32px;
+    border-radius: 2px;
+  }
+  .review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .reviewer-name {
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .review-stars {
+    color: var(--brass-bright);
+    letter-spacing: 2px;
+    font-size: 13px;
+  }
+  .review-body {
+    font-size: 14px;
+    color: var(--parchment-dim);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  @media (max-width: 960px) {
+    .product-container { grid-template-columns: 1fr; gap: 40px; }
+    .reviews-grid { grid-template-columns: 1fr; gap: 24px; }
+    body { padding-top: 80px; }
+  }
+</style>
+</head>
+<body>
+
+  <header>
+    <div class="wrap">
+      <nav>
+        <a href="index.html" class="logo">Holloway <span>&</span> Oak</a>
+        <a href="bedroom.html" class="back-link mono">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Back to Collection
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="product-container">
+      
+      <div class="carousel-wrapper">
+        <div class="carousel-viewport">
+          <div class="carousel-track" id="carouselTrack">
+            <div class="carousel-slide">
+              <img src="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?q=80&w=1000&auto=format&fit=crop" alt="Oak Haven Bed Main View">
+            </div>
+            <div class="carousel-slide">
+              <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1000&auto=format&fit=crop" alt="Oak Haven Bed Ambient Perspective">
+            </div>
+            <div class="carousel-slide">
+              <img src="https://images.unsplash.com/photo-1540518614846-7eded433c457?q=80&w=1000&auto=format&fit=crop" alt="Oak Haven Wood Craftsmanship Profile">
+            </div>
+          </div>
+        </div>
+        
+        <button class="carousel-btn prev" id="prevBtn" aria-label="Previous image">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <button class="carousel-btn next" id="nextBtn" aria-label="Next image">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+
+        <div class="carousel-dots" id="carouselDots">
+          <span class="dot active"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+      </div>
+
+      <div class="product-details">
+        <div class="product-eyebrow mono">Collection // Bedroom</div>
+        <h1 class="product-main-title serif">Oak Haven Bed Frame</h1>
+        <div class="product-price mono">$2,400</div>
+        
+        <p class="product-description">
+          An architectural centerpiece engineered for timeless architectural presence. Handcrafted from sustainably harvested white oak timber, the Oak Haven features traditional exposed mortise-and-tenon joinery that celebrates raw structural honesty. Each piece is treated with organic oils to pull forward the deep, intricate character of the natural wood grain.
+        </p>
+
+        <div class="product-specs">
+          <div class="spec-item">
+            <span class="spec-label">Material</span>
+            <span class="spec-value">Solid White Oak</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Finish</span>
+            <span class="spec-value">Hand-Rubbed Natural Oil & Wax Blend</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Dimensions</span>
+            <span class="spec-value">Queen / King / Cal King</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Origin</span>
+            <span class="spec-value">100% Benchmade Artisan Handcrafted</span>
+          </div>
+        </div>
+
+        <a href="https://instagram.com" target="_blank" class="instagram-btn mono">
+          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+          Order via Instagram
+        </a>
+
+      </div>
+    </div>
+
+    <section class="reviews-section">
+      <h2 class="reviews-title serif">Client Journal & Reviews</h2>
+      <div class="reviews-grid">
+        
+        <div class="review-card">
+          <div class="review-header">
+            <span class="reviewer-name serif">Julian R.</span>
+            <span class="review-stars">★★★★★</span>
+          </div>
+          <p class="review-body">
+            "The structural joinery detail on the headboard is incredible. It feels immensely solid and beautifully grounds our entire bedroom space. A true architectural masterpiece."
+          </p>
+        </div>
+
+        <div class="review-card">
+          <div class="review-header">
+            <span class="reviewer-name serif">Eleanor G.</span>
+            <span class="review-stars">★★★★★</span>
+          </div>
+          <p class="review-body">
+            "We ordered custom dimensions via Instagram DM and the process was effortless. The finish retains a warm wooden scent and looks exquisite under morning sunlight."
+          </p>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const track = document.getElementById('carouselTrack');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const dots = document.querySelectorAll('.dot');
+    
+    let currentIndex = 0;
+    const totalSlides = dots.length;
+
+    function updateCarousel(index) {
+      track.style.transform = `translateX(-${index * 100}%)`;
+      dots.forEach(dot => dot.classList.remove('active'));
+      dots[index].classList.add('active');
+      currentIndex = index;
+    }
+
+    nextBtn.addEventListener('click', () => {
+      let index = (currentIndex + 1) % totalSlides;
+      updateCarousel(index);
+    });
+
+    prevBtn.addEventListener('click', () => {
+      let index = (currentIndex - 1 + totalSlides) % totalSlides;
+      updateCarousel(index);
+    });
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => updateCarousel(i));
+    });
+  </script>
+</body>
+</html>
