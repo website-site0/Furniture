@@ -575,6 +575,7 @@
   <script type="module">
     import * as THREE from 'three';
     import { GLTFLoader } from 'https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
+    import { MeshoptDecoder } from 'https://unpkg.com/three@0.160.0/examples/jsm/libs/meshopt_decoder.module.js';
 
     const MODEL_URL = 'compressed.glb';
     let modelLoadPromise = null;
@@ -582,6 +583,7 @@
     function loadModelOnce() {
       if (!modelLoadPromise) {
         const loader = new GLTFLoader();
+        loader.setMeshoptDecoder(MeshoptDecoder);
         modelLoadPromise = new Promise((resolve, reject) => {
           loader.load(
             MODEL_URL,
