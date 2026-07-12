@@ -1,12 +1,22 @@
 <!DOCTYPE html>
-<html lang="hy">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ննջասենյակի Կոլեկցիա — Holloway & Oak</title>
+<title>Bedroom Collection — Holloway & Oak</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
 <style>
   :root{
     --ink:#1C1815;
@@ -16,6 +26,7 @@
     --brass:#B08D57;
     --brass-bright:#C9A876;
     --line: rgba(232,223,203,0.22);
+    --white-lux: #F5F1E6;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   html{scroll-behavior:smooth;}
@@ -43,11 +54,11 @@
   .hero-video-container {
     position: relative;
     width: 100%;
-    height: 120vh;
+    height: 100vh;
     background: #000;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: center; 
+    justify-content: flex-start; 
     overflow: hidden;
   }
   .hero-video-container video {
@@ -59,29 +70,43 @@
     object-fit: cover;
     transform: translate(-50%, -50%);
     z-index: 1;
-    filter: brightness(0.7) sepia(10%);
+    filter: brightness(0.6) sepia(8%);
   }
-  /* Մութ էֆեկտ վիդեոյի վրա */
   .hero-video-container::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: rgba(28, 24, 21, 0.3);
+    background: linear-gradient(90deg, rgba(28, 24, 21, 0.85) 0%, rgba(28, 24, 21, 0.4) 50%, rgba(28, 24, 21, 0.1) 100%);
     z-index: 2;
   }
 
-  /* Succession Անիմացիոն Տեքստ / Կոճակ */
   .succession-intro {
     position: relative;
     z-index: 3;
-    text-align: center;
-    max-width: 700px;
-    padding: 0 20px;
+    text-align: left;
+    max-width: 780px;
+    padding: 0 40px;
+    margin-left: calc((100vw - 1200px) / 2); 
+  }
+  @media (max-width: 1280px) {
+    .succession-intro { margin-left: 0; padding: 0 40px; }
+  }
+  
+  .hero-eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.25em;
+    color: var(--brass-bright);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUpSuccession 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards 0.2s;
   }
   .succession-title {
-    font-size: clamp(36px, 5vw, 64px);
+    font-size: clamp(40px, 5.5vw, 68px);
     font-weight: 300;
-    margin-bottom: 20px;
+    line-height: 1.15;
+    margin-bottom: 24px;
     opacity: 0;
     transform: translateY(30px);
     animation: fadeUpSuccession 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards 0.5s;
@@ -90,18 +115,22 @@
     color: var(--brass-bright);
     font-style: italic;
   }
+  .hero-description {
+    font-size: clamp(16px, 1.8vw, 20px);
+    line-height: 1.6;
+    color: var(--parchment-dim);
+    font-weight: 300;
+    max-width: 580px;
+    margin-bottom: 40px;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUpSuccession 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards 0.8s;
+  }
 
-  /* [Design yours] Կենտրոնական Սլաքով Կոճակ */
   .design-yours-btn {
-    position: absolute;
-    bottom: 8%;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 4;
-    display: flex;
-    flex-direction: column;
+    display: inline-flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
     background: none;
     border: none;
     color: var(--parchment);
@@ -111,12 +140,12 @@
     letter-spacing: 0.2em;
     text-decoration: none;
     opacity: 0;
+    transform: translateY(20px);
     transition: cubic-bezier(0.2, 0.8, 0.2, 1) 0.4s;
   }
-  /* Այս դասը կավելանա JS-ով, երբ վիդեոն ավարտվի */
   .design-yours-btn.show-btn {
     opacity: 1;
-    animation: bounceSlow 2s infinite ease-in-out;
+    transform: translateY(0);
   }
   .design-yours-btn:hover {
     color: var(--brass-bright);
@@ -136,25 +165,109 @@
   .design-yours-btn:hover .btn-circle {
     border-color: var(--brass-bright);
     box-shadow: 0 0 15px rgba(201,168,118,0.3);
+    transform: translateX(5px);
   }
 
-  /* Keyframes Անիմացիաներ */
   @keyframes fadeUpSuccession {
     to {
       opacity: 1;
       transform: translateY(0);
     }
   }
-  @keyframes bounceSlow {
-    0%, 100% { transform: translate(-50%, 0); }
-    50% { transform: translate(-50%, -10px); }
+
+  /* ---------- NEW: WHY CHOOSE US SECTION ---------- */
+  .why-choose-us-section {
+    margin: 80px 40px;
+    padding: 80px 60px;
+    background: var(--white-lux);
+    color: var(--ink);
+    border-radius: 12px;
+    display: grid;
+    grid-template-columns: 1.1fr 1.9fr;
+    gap: 60px;
+    align-items: center;
+    transition: box-shadow 0.5s cubic-bezier(0.25, 1, 0.5, 1), transform 0.5s ease;
+  }
+  .why-choose-us-section:hover {
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.35);
+  }
+  
+  .wcu-img-container {
+    width: 100%;
+    aspect-ratio: 1/1;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(28,24,21,0.15);
+  }
+  .wcu-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(40%) brightness(0.95);
+    transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), filter 0.5s ease;
+  }
+  .why-choose-us-section:hover .wcu-img-container img {
+    transform: scale(1.04);
+    filter: grayscale(0%) brightness(1);
+  }
+
+  .wcu-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .wcu-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--brass);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .wcu-title {
+    font-size: clamp(32px, 3.5vw, 46px);
+    font-weight: 300;
+    line-height: 1.2;
+    color: var(--ink);
+    margin-bottom: 35px;
+  }
+  .wcu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+  .wcu-item {
+    display: flex;
+    flex-direction: column;
+  }
+  .wcu-item h3 {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: var(--ink-soft);
+  }
+  .wcu-item p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #554e48;
+    font-weight: 400;
+  }
+
+  /* Reveal Animation Styles for WCU */
+  .reveal-line {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  .reveal-line.active {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   /* ---------- PRODUCTS GRID SECTION ---------- */
   .products-section {
-    padding: 120px 0;
+    padding: 100px 0 140px 0;
     background: var(--ink);
-    border-top: 1px solid var(--line);
+    perspective: 1200px;
   }
   .section-head {
     margin-bottom: 60px;
@@ -170,207 +283,124 @@
     margin-bottom: 15px;
   }
   .eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--brass); }
-  
+
   .grid-layout {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 40px;
   }
   .product-card {
-    border: 1px solid var(--line);
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    background: transparent;
+  }
+
+  .product-3d-wrapper {
     background: var(--ink-soft);
-    border-radius: 2px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
     overflow: hidden;
-    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.4s ease, box-shadow 0.4s ease;
   }
-  .product-card:hover {
+  .product-card:hover .product-3d-wrapper {
+    transform: translateZ(20px) rotateX(2deg) rotateY(-2deg);
     border-color: var(--brass-bright);
-    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 25px rgba(201, 168, 118, 0.08);
   }
+
   .product-img-box {
     width: 100%;
     aspect-ratio: 4/3;
     overflow: hidden;
-    background: #000;
+    background-image:
+      linear-gradient(180deg, rgba(20,17,14,0.35) 0%, rgba(20,17,14,0.55) 100%),
+      url('product-bg.png');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    transform-style: preserve-3d;
   }
-  .product-img-box img {
+  .product-img-box canvas {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    transition: transform 0.6s ease;
+    display: block;
+    filter: grayscale(15%) brightness(0.9);
+    transition: filter 0.4s ease;
+    position: relative;
+    z-index: 2;
   }
-  .product-card:hover .product-img-box img {
-    transform: scale(1.05);
+  .product-card:hover .product-img-box canvas {
+    filter: grayscale(0%) brightness(1);
   }
+
   .product-info {
-    padding: 24px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    transform: translateZ(15px);
   }
   .product-title {
-    font-size: 20px;
-    font-weight: 400;
-    margin-bottom: 8px;
+    font-size: 22px;
+    font-weight: 300;
+    margin-bottom: 12px;
+    letter-spacing: 0.02em;
+    transition: color 0.3s ease;
   }
-  .product-desc {
-    font-size: 14px;
-    color: var(--parchment-dim);
-    line-height: 1.6;
-    margin-bottom: 18px;
-  }
-  .product-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px solid var(--line);
-    padding-top: 16px;
-  }
-  .price {
-    font-size: 18px;
+  .product-card:hover .product-title {
     color: var(--brass-bright);
   }
-  /* ---------- 3D ՄԻՆԻՄԱԼԻՍՏԱԿԱՆ ՈՃԵՐ ---------- */
-.products-section {
-  padding: 140px 0;
-  background: var(--ink);
-  border-top: 1px solid var(--line);
-  /* Ապահովում է 3D խորությունը */
-  perspective: 1200px; 
-}
-
-.grid-layout {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 40px;
-}
-
-.product-card {
-  text-decoration: none;
-  color: inherit;
-  cursor: pointer;
-  background: transparent;
-}
-
-/* 3D Շերտ */
-.product-3d-wrapper {
-  background: var(--ink-soft);
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  transform-style: preserve-3d;
-  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.4s ease, box-shadow 0.4s ease;
-}
-
-/* Hover անելիս ամբողջ քարտը մոտենում է 3D-ով */
-.product-card:hover .product-3d-wrapper {
-  transform: translateZ(20px) rotateX(2deg) rotateY(-2deg);
-  border-color: var(--brass-bright);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 25px rgba(201, 168, 118, 0.08);
-}
-
-.product-img-box {
-  width: 100%;
-  aspect-ratio: 4/3;
-  overflow: hidden;
-  background: #111;
-  position: relative;
-  transform-style: preserve-3d;
-}
-
-.product-img-box img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  filter: grayscale(15%) brightness(0.9);
-  transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1), filter 0.4s ease;
-}
-
-/* Hover-ի ժամանակ նկարը սահուն խորանում է */
-.product-card:hover .product-img-box img {
-  transform: scale(1.04) translateZ(10px);
-  filter: grayscale(0%) brightness(1);
-}
-
-.product-info {
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  transform: translateZ(15px); /* 3D pop-out տեքստի համար */
-}
-
-.product-title {
-  font-size: 22px;
-  font-weight: 300;
-  margin-bottom: 12px;
-  letter-spacing: 0.02em;
-  transition: color 0.3s ease;
-}
-
-.product-card:hover .product-title {
-  color: var(--brass-bright);
-}
-
-.product-desc {
-  font-size: 13.5px;
-  color: var(--parchment-dim);
-  line-height: 1.6;
-  font-weight: 300;
-  margin-bottom: 24px;
-  flex-grow: 1;
-}
-
-.product-meta {
-  border-top: 1px solid rgba(232,223,203,0.1);
-  padding-top: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.price {
-  font-size: 17px;
-  color: var(--brass-bright);
-  font-weight: 500;
-  letter-spacing: 0.05em;
-}
-
-/* ---------- ՍՔՐՈԼԻ ԱՆԻՄԱՑԻԱ (ՏՈՂ ԱՌ ՏՈՂ) ---------- */
-.reveal-item {
-  opacity: 0;
-  transform: translateY(40px) rotateX(-5deg);
-  transition: opacity 1s cubic-bezier(0.215, 0.610, 0.355, 1), transform 1s cubic-bezier(0.215, 0.610, 0.355, 1);
-}
-
-.reveal-item.active {
-  opacity: 1;
-  transform: translateY(0) rotateX(0);
-}
-
-@media (max-width: 900px) {
-  .grid-layout { grid-template-columns: repeat(2, 1fr); gap: 24px; }
-  .products-section { padding: 80px 0; }
-}
-@media (max-width: 600px) {
-  .grid-layout { grid-template-columns: 1fr; }
-}
-  .order-link {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border-bottom: 1px solid var(--brass);
-    padding-bottom: 2px;
-    transition: color 0.3s;
+  .product-desc {
+    font-size: 13.5px;
+    color: var(--parchment-dim);
+    line-height: 1.6;
+    font-weight: 300;
+    margin-bottom: 24px;
+    flex-grow: 1;
   }
-  .order-link:hover { color: var(--brass-bright); }
+  .product-meta {
+    border-top: 1px solid rgba(232,223,203,0.1);
+    padding-top: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .price {
+    font-size: 17px;
+    color: var(--brass-bright);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
 
+  .reveal-item {
+    opacity: 0;
+    transform: translateY(40px) rotateX(-5deg);
+    transition: opacity 1s cubic-bezier(0.215, 0.610, 0.355, 1), transform 1s cubic-bezier(0.215, 0.610, 0.355, 1);
+  }
+  .reveal-item.active {
+    opacity: 1;
+    transform: translateY(0) rotateX(0);
+  }
+
+  @media (max-width: 1024px) {
+    .why-choose-us-section { grid-template-columns: 1fr; gap: 40px; padding: 40px; }
+    .wcu-img-container { aspect-ratio: 16/9; }
+  }
   @media (max-width: 900px) {
-    .grid-layout { grid-template-columns: repeat(2, 1fr); }
+    .grid-layout { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+    .hero-video-container { justify-content: center; }
+    .succession-intro { text-align: center; padding: 0 24px; }
+    .design-yours-btn { flex-direction: column-reverse; gap: 12px; }
+    .wcu-grid { grid-template-columns: 1fr; gap: 24px; }
   }
   @media (max-width: 600px) {
     .grid-layout { grid-template-columns: 1fr; }
+    .why-choose-us-section { margin: 40px 20px; padding: 30px 20px; }
   }
 </style>
 </head>
@@ -387,124 +417,388 @@
   <div class="hero-video-container">
     <video id="collectionVideo" autoplay muted playsinline>
       <source src="absolutely-static-camera-locked-tripod-shot-no-cam (2) (1) (1)-ezremove.mp4" type="video/mp4">
-      Ձեր բրաուզերը չի աջակցում վիդեո թեգը:
+      Your browser does not support the video tag.
     </video>
 
     <div class="succession-intro">
-      <h1 class="succession-title serif">Ննջասենյակի<br><em>Հանգստության Կոլեկցիա</em></h1>
-    </div>
-
-    <a href="#products-list" id="designYoursBtn" class="design-yours-btn mono">
-      <span>Design yours</span>
-      <div class="btn-circle">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-      </div>
-    </a>
-  </div>
-
-<section id="products-list" class="products-section">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <div class="eyebrow">Handcrafted Selection</div>
-      <h2 class="serif" style="font-size: clamp(28px, 3vw, 42px); font-weight:400; color: var(--parchment);">The Oak & Walnut Collection</h2>
-    </div>
-
-    <div class="grid-layout">
+      <div class="hero-eyebrow mono">The Bedroom Edit</div>
+      <h1 class="succession-title serif">Bedroom<br><em>Relaxing space</em></h1>
+      <p class="hero-description">Discover the perfect synthesis of natural raw materials and minimalist architectural forms. Each design is designed to bring absolute peace and comfort to your space.</p>
       
-      <div class="product-card reveal-item" onclick="window.location.href='product-bed.html';">
-        <div class="product-3d-wrapper">
-          <div class="product-img-box">
-            <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=600&auto=format&fit=crop" alt="Oak Haven Bed Frame">
-          </div>
-          <div class="product-info">
-            <h3 class="product-title serif">Oak Haven Bed Frame</h3>
-            <p class="product-desc">Masterfully forged from solid white oak using traditional mortise-and-tenon joinery for heirloom longevity.</p>
-            <div class="product-meta mono">
-              <span class="price">$2,400</span>
-            </div>
-          </div>
+      <a href="#why-choose-us" id="designYoursBtn" class="design-yours-btn mono">
+        <span>Design yours</span>
+        <div class="btn-circle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </div>
-      </div>
-
-      <div class="product-card reveal-item" onclick="window.location.href='product-bed.html';">
-        <div class="product-3d-wrapper">
-          <div class="product-img-box">
-            <img src="https://images.unsplash.com/photo-1532372320978-9b4d6a3a854c?q=80&w=600&auto=format&fit=crop" alt="Heritage Bedside Nightstand">
-          </div>
-          <div class="product-info">
-            <h3 class="product-title serif">Heritage Bedside Nightstand</h3>
-            <p class="product-desc">Features a hand-rubbed oil finish, silent under-mount glides, and solid weathered brass hardware.</p>
-            <div class="product-meta mono">
-              <span class="price">$650</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="product-card reveal-item" onclick="window.location.href='product-bed.html';">
-        <div class="product-3d-wrapper">
-          <div class="product-img-box">
-            <img src="https://images.unsplash.com/photo-1595515106969-1ce29566ff1c?q=80&w=600&auto=format&fit=crop" alt="Classic Walnut Dresser">
-          </div>
-          <div class="product-info">
-            <h3 class="product-title serif">Classic Walnut Dresser</h3>
-            <p class="product-desc">Six spacious dovetail drawers built entirely from native walnut timber, detailed with clean architectural profiles.</p>
-            <div class="product-meta mono">
-              <span class="price">$1,850</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      </a>
     </div>
   </div>
-</section>
 
+  <section id="why-choose-us" class="why-choose-us-section">
+    <div class="wcu-img-container">
+      <img src="bedroom-interior.png" alt="Holloway & Oak Premium Bedroom Interior">
+    </div>
+    
+    <div class="wcu-content">
+      <div class="wcu-eyebrow mono reveal-line">Our Philosophy</div>
+      <h2 class="wcu-title serif reveal-line">When You Choose Us</h2>
+      
+      <div class="wcu-grid">
+        <div class="wcu-item reveal-line">
+          <h3>Architectural Harmony</h3>
+          <p>We blend clean, geometric structures with the organic flow of nature. Your bedroom becomes a sanctuary where every line speaks of refined, timeless elegance.</p>
+        </div>
+        
+        <div class="wcu-item reveal-line">
+          <h3>Master Craftsmanship</h3>
+          <p>Every joint, finish, and texture is carefully curated by artisans who honor traditional wood and metalwork techniques for heirloom-quality durability.</p>
+        </div>
+        
+        <div class="wcu-item reveal-line">
+          <h3>Tailored Premium Comfort</h3>
+          <p>We do not create mere furniture; we construct immersive restful experiences designed symmetrically around your personal well-being.</p>
+        </div>
+        
+        <div class="wcu-item reveal-line">
+          <h3>Honest Raw Materials</h3>
+          <p>From native solid walnut to fine weathered brass, our materials are selected for their character, longevity, and biological connection to the earth.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="products-list" class="products-section">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow">Handcrafted Selection</div>
+        <h2 class="serif" style="font-size: clamp(28px, 3vw, 42px); font-weight:400; color: var(--parchment);">The Oak & Walnut Collection</h2>
+      </div>
+
+      <div class="grid-layout">
+
+        <div class="product-card reveal-item" onclick="window.location.href='product-bed.html';">
+          <div class="product-3d-wrapper">
+            <div class="product-img-box" data-model-viewer>
+              <canvas class="model-canvas" aria-label="Oak Haven Bed Frame 3D preview"></canvas>
+            </div>
+            <div class="product-info">
+              <h3 class="product-title serif">Oak Haven Bed Frame</h3>
+              <p class="product-desc">Masterfully forged from solid white oak using traditional mortise-and-tenon joinery for heirloom longevity.</p>
+              <div class="product-meta mono">
+                <span class="price">$2,400</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="product-card reveal-item" onclick="window.location.href='product-bed.html';">
+          <div class="product-3d-wrapper">
+            <div class="product-img-box" data-model-viewer>
+              <canvas class="model-canvas" aria-label="Heritage Bedside Nightstand 3D preview"></canvas>
+            </div>
+            <div class="product-info">
+              <h3 class="product-title serif">Heritage Bedside Nightstand</h3>
+              <p class="product-desc">Features a hand-rubbed oil finish, silent under-mount glides, and solid weathered brass hardware.</p>
+              <div class="product-meta mono">
+                <span class="price">$650</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="product-card reveal-item" onclick="window.location.href='product-bed.html';">
+          <div class="product-3d-wrapper">
+            <div class="product-img-box" data-model-viewer>
+              <canvas class="model-canvas" aria-label="Classic Walnut Dresser 3D preview"></canvas>
+            </div>
+            <div class="product-info">
+              <h3 class="product-title serif">Classic Walnut Dresser</h3>
+              <p class="product-desc">Six spacious dovetail drawers built entirely from native walnut timber, detailed with clean architectural profiles.</p>
+              <div class="product-meta mono">
+                <span class="price">$1,850</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
 
   <script>
-
   document.addEventListener("DOMContentLoaded", () => {
-    const items = document.querySelectorAll('.reveal-item');
-    
+    // Reveal Observer for cards & grid items
+    const items = document.querySelectorAll('.reveal-item, .reveal-line');
+
     const observerOptions = {
-      threshold: 0.15,
-      rootMargin: "0px 0px -50px 0px"
+      threshold: 0.10,
+      rootMargin: "0px 0px -40px 0px"
     };
 
     const itemObserver = new IntersectionObserver((entries, observer) => {
-      entries.forEach((entry, index) => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          // Գտնում ենք տվյալ էլեմենտի ինդեքսը իր շարքում տող առ տող անիմացիայի համար
-          const card = entry.target;
+          const element = entry.target;
           
-          // Ավելացնում ենք մեղմ ուշացում (delay) ամեն հաջորդ քարտի համար
-          const elementIndex = Array.from(items).indexOf(card);
-          const delay = (elementIndex % 3) * 150; // 0ms, 150ms, 300ms
-          
-          card.style.transitionDelay = `${delay}ms`;
-          card.classList.add('active');
-          
-          // Սկրինից դուրս գալուց հետո էլ չանհետանա
-          observer.unobserve(card);
+          if (element.classList.contains('reveal-item')) {
+            const itemsArray = Array.from(document.querySelectorAll('.reveal-item'));
+            const elementIndex = itemsArray.indexOf(element);
+            const delay = (elementIndex % 3) * 150; 
+            element.style.transitionDelay = `${delay}ms`;
+          } else if (element.classList.contains('reveal-line')) {
+            const linesArray = Array.from(document.querySelectorAll('.reveal-line'));
+            const elementIndex = linesArray.indexOf(element);
+            element.style.transitionDelay = `${elementIndex * 100}ms`;
+          }
+
+          element.classList.add('active');
+          observer.unobserve(element);
         }
       });
     }, observerOptions);
 
     items.forEach(item => itemObserver.observe(item));
   });
-    const video = document.getElementById('collectionVideo');
-    const btn = document.getElementById('designYoursBtn');
 
-    // Երբ վիդեոն ավարտվի, Succession էֆեկտով հայտնվում է [Design yours] կոճակը
-    video.onended = function() {
-      btn.classList.add('show-btn');
-    };
+  const video = document.getElementById('collectionVideo');
+  const btn = document.getElementById('designYoursBtn');
 
-    // Ապահովագրություն. եթե ինչ-որ պատճառով վիդեոն չխաղա կամ երկար տևի, 
-    // կոճակը 3 վայրկյան անց ամեն դեպքում կհայտնվի
-    setTimeout(() => {
-      btn.classList.add('show-btn');
-    }, 6000);
+  video.onended = function() {
+    btn.classList.add('show-btn');
+  };
+
+  setTimeout(() => {
+    btn.classList.add('show-btn');
+  }, 4000);
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
+
+    const MODEL_URL = '47bc5eea9d7ea18bd0d0cd0aea807848.glb';
+    let modelLoadPromise = null;
+
+    function loadModelOnce() {
+      if (!modelLoadPromise) {
+        const loader = new GLTFLoader();
+        modelLoadPromise = new Promise((resolve, reject) => {
+          loader.load(
+            MODEL_URL,
+            (gltf) => resolve(gltf.scene),
+            undefined,
+            (err) => reject(err)
+          );
+        });
+      }
+      return modelLoadPromise;
+    }
+
+    class ModelViewer {
+      constructor(container, canvas) {
+        this.container = container;
+        this.canvas = canvas;
+
+        // Slow, ambient rotation — speeds up gently on hover
+        this.baseRotationSpeed = 0.09;
+        this.hoverMultiplier = 1;
+        this.targetHoverMultiplier = 1;
+
+        this.currentScale = 1;
+        this.targetScale = 1;
+
+        this.model = null;
+        this.isVisible = false;
+        this.frameId = null;
+        this.clock = new THREE.Clock();
+
+        this._resizeHandler = this.onResize.bind(this);
+        this._tick = this.tick.bind(this);
+
+        this.initScene();
+        this.attachModel();
+        window.addEventListener('resize', this._resizeHandler);
+      }
+
+      initScene() {
+        const { clientWidth: w, clientHeight: h } = this.container;
+
+        this.renderer = new THREE.WebGLRenderer({
+          canvas: this.canvas,
+          alpha: true,
+          antialias: true
+        });
+        this.renderer.setPixelRatio(1);
+        this.renderer.setSize(w, h, false);
+        this.renderer.setClearColor(0x000000, 0);
+        this.renderer.shadowMap.enabled = false;
+        this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+        this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        this.renderer.toneMappingExposure = 1.1;
+
+        this.scene = new THREE.Scene();
+        this.camera = new THREE.PerspectiveCamera(35, w / h, 0.1, 100);
+        this.camera.position.set(0, 0, 4.2);
+
+        const ambient = new THREE.AmbientLight(0xffffff, 0.7);
+        this.scene.add(ambient);
+
+        const keyLight = new THREE.DirectionalLight(0xfff2df, 1.4);
+        keyLight.position.set(3, 4, 5);
+        this.scene.add(keyLight);
+
+        const rimLight = new THREE.DirectionalLight(0xd9c7ff, 0.35);
+        rimLight.position.set(-4, 2, -3);
+        this.scene.add(rimLight);
+      }
+
+      async attachModel() {
+        try {
+          const original = await loadModelOnce();
+          const clone = original.clone(true);
+
+          const box = new THREE.Box3().setFromObject(clone);
+          const size = new THREE.Vector3();
+          const center = new THREE.Vector3();
+          box.getSize(size);
+          box.getCenter(center);
+
+          // Center the model exactly at the origin so it rotates in place, mid-frame
+          clone.position.sub(center);
+          clone.position.y -= 0.24;
+
+          const maxDim = Math.max(size.x, size.y, size.z) || 1;
+          const desiredSize = 1.8;
+          const scaleFactor = desiredSize / maxDim;
+          clone.scale.setScalar(scaleFactor);
+
+          // Wrap in a pivot group so rotation always happens around dead-center
+          const pivot = new THREE.Group();
+          pivot.add(clone);
+
+          this.model = pivot;
+          this.scene.add(this.model);
+          this.baseScale = scaleFactor;
+        } catch (err) {
+          console.error('Failed to load 3D model:', err);
+        }
+      }
+
+      setVisible(visible) {
+        this.isVisible = visible;
+        if (visible) this.start();
+        else this.stop();
+      }
+
+      setHovered(hovered) {
+        this.targetHoverMultiplier = hovered ? 1.5 : 1;
+        this.targetScale = hovered ? 1.05 : 1;
+      }
+
+      start() {
+        if (this.frameId !== null) return;
+        this.clock.start();
+        this.frameId = requestAnimationFrame(this._tick);
+      }
+
+      stop() {
+        if (this.frameId !== null) {
+          cancelAnimationFrame(this.frameId);
+          this.frameId = null;
+        }
+      }
+
+      tick() {
+        if (!this.isVisible) return;
+        this.frameId = requestAnimationFrame(this._tick);
+
+        const delta = this.clock.getDelta();
+        this.hoverMultiplier += (this.targetHoverMultiplier - this.hoverMultiplier) * Math.min(delta * 4, 1);
+        this.currentScale += (this.targetScale - this.currentScale) * Math.min(delta * 4, 1);
+
+        if (this.model) {
+          this.model.rotation.y += this.baseRotationSpeed * this.hoverMultiplier * delta;
+          const s = this.currentScale;
+          this.model.scale.setScalar(s);
+        }
+
+        this.renderer.render(this.scene, this.camera);
+      }
+
+      onResize() {
+        const { clientWidth: w, clientHeight: h } = this.container;
+        if (w === 0 || h === 0) return;
+        this.camera.aspect = w / h;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(w, h, false);
+      }
+
+      dispose() {
+        this.stop();
+        window.removeEventListener('resize', this._resizeHandler);
+        if (this.model) {
+          this.model.traverse((node) => {
+            if (node.isMesh) {
+              node.geometry?.dispose();
+              if (Array.isArray(node.material)) node.material.forEach((m) => m.dispose());
+              else node.material?.dispose();
+            }
+          });
+          this.scene.remove(this.model);
+        }
+        this.renderer.dispose();
+      }
+    }
+
+    function initProductViewers() {
+      const boxes = document.querySelectorAll('[data-model-viewer]');
+      const viewers = [];
+
+      boxes.forEach((box) => {
+        const canvas = box.querySelector('canvas.model-canvas');
+        if (!canvas) return;
+
+        const viewer = new ModelViewer(box, canvas);
+        viewers.push(viewer);
+
+        const card = box.closest('.product-card');
+        if (card) {
+          card.addEventListener('mouseenter', () => viewer.setHovered(true));
+          card.addEventListener('mouseleave', () => viewer.setHovered(false));
+        }
+      });
+
+      const inViewport = viewers.map(() => false);
+
+      const visibilityObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          const idx = Array.from(boxes).indexOf(entry.target);
+          if (idx === -1) return;
+          inViewport[idx] = entry.isIntersecting;
+          if (document.visibilityState === 'visible') {
+            viewers[idx].setVisible(entry.isIntersecting);
+          }
+        });
+      }, { threshold: 0.05 });
+
+      boxes.forEach((box) => visibilityObserver.observe(box));
+
+      // Extra GPU savings: stop rendering entirely while the browser tab itself
+      // is backgrounded, resuming only cards that were already in view.
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+          viewers.forEach((v) => v.setVisible(false));
+        } else {
+          viewers.forEach((v, idx) => v.setVisible(inViewport[idx]));
+        }
+      });
+
+      window.addEventListener('beforeunload', () => {
+        viewers.forEach((v) => v.dispose());
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', initProductViewers);
   </script>
 </body>
 </html>

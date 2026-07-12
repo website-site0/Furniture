@@ -667,6 +667,65 @@
     .plux-timeline{padding:0 22px 8px;}
     .plux-edge-arrow{display:none;}
   }
+  /* ---------- CTA ---------- */
+  .cta-section{ padding:110px 0; }
+  .cta-card{
+    position:relative;
+    display:grid;
+    grid-template-columns:1.1fr 1fr;
+    align-items:stretch;
+    min-height:440px;
+    background:linear-gradient(135deg, var(--ink-soft), var(--ink));
+    border:1px solid var(--line);
+    border-radius:4px;
+    overflow:hidden;
+  }
+  .cta-copy{
+    position:relative;z-index:2;
+    padding:64px 60px;
+    display:flex;flex-direction:column;justify-content:center;
+  }
+  .cta-copy .eyebrow{margin-bottom:22px;}
+  .cta-copy h2{
+    font-family:'Fraunces', serif;font-weight:400;
+    font-size:clamp(30px,3.2vw,44px);line-height:1.1;
+    color:var(--parchment);margin-bottom:22px;max-width:460px;
+  }
+  .cta-copy h2 em{font-style:italic;color:var(--brass-bright);}
+  .cta-copy p{
+    color:var(--parchment-dim);font-size:15.5px;line-height:1.75;
+    max-width:420px;margin-bottom:36px;
+  }
+  .cta-btn{
+    display:inline-flex;align-items:center;gap:10px;width:fit-content;
+    background:linear-gradient(120deg, var(--brass), var(--brass-bright));
+    color:var(--ink);padding:17px 34px;font-size:13px;
+    letter-spacing:0.06em;text-transform:uppercase;font-weight:600;
+    border-radius:2px;transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .cta-btn:hover{ transform:translateY(-2px); box-shadow:0 14px 28px rgba(176,141,87,0.25); }
+  .cta-visual{ position:relative; overflow:hidden; }
+  .cta-visual img{
+    width:100%;height:100%;object-fit:cover;
+    filter:blur(2px) sepia(12%) saturate(85%) brightness(0.75);
+    transform:scale(1.08);
+  }
+  .cta-visual::before{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(to right, var(--ink) 0%, rgba(28,24,21,0.55) 30%, rgba(28,24,21,0.15) 65%, transparent 100%);
+  }
+  .cta-visual::after{
+    content:'';position:absolute;inset:0;
+    background:radial-gradient(ellipse 600px 400px at 80% 30%, rgba(139,74,43,0.25), transparent 65%);
+  }
+  @media (max-width: 860px){
+    .cta-card{ grid-template-columns:1fr; }
+    .cta-visual{ min-height:280px; order:-1; }
+    .cta-visual::before{ background:linear-gradient(to bottom, transparent 40%, var(--ink) 95%); }
+    .cta-copy{ padding:44px 28px; }
+  }
+
+  /* ---------- FOOTER ---------- */
 </style>
 </head>
 <body>
@@ -693,11 +752,11 @@
       <p class="hero-sub">Every piece leaves our workshop with the same mortise-and-tenon joints, hand-rubbed oil finish, and 40-year structural guarantee we started with. No particleboard has ever entered this building.</p>
       <div class="hero-actions">
         <a href="#collection" class="btn-primary">View the Collection</a>
-        <a href="#craft" class="btn-ghost">↳ How it's built</a>
+        <a href="#process" class="btn-ghost">↳ How it's built</a>
       </div>
       <div class="hero-stats">
         <div class="stat"><b>40 yr</b><span>Structural guarantee</span></div>
-        <div class="stat"><b>1,140</b><span>Hours per dining table</span></div>
+        <div class="stat"><b>1,140</b><span>Modern Interior</span></div>
         <div class="stat"><b>6</b><span>Wood species sourced</span></div>
       </div>
     </div>
@@ -859,7 +918,7 @@
         <div class="review-body">
           <div class="review-top"><span class="review-name">A. Marchetti</span><span class="review-stars mono">★★★★★</span></div>
           <p class="review-quote">"The chairs have taken sixteen years of toddlers, dinner parties, and one questionable New Year's Eve. Not a single joint has loosened."</p>
-          <div class="review-meta mono">Owner since 2009 · Dining Chairs</div>
+          <div class="review-meta mono">Owner since 2026 · Dining Chairs</div>
         </div>
       </div>
       <div class="review-row reveal" style="transition-delay:110ms">
@@ -867,7 +926,7 @@
         <div class="review-body">
           <div class="review-top"><span class="review-name">D. Okafor</span><span class="review-stars mono">★★★★★</span></div>
           <p class="review-quote">"Our Cartwright table sees three kids' worth of homework, art projects, and cereal bowls every morning. The finish still looks brand new."</p>
-          <div class="review-meta mono">Owner since 2019 · Cartwright Table</div>
+          <div class="review-meta mono">Owner since 2026 · Cartwright Table</div>
         </div>
       </div>
       <div class="review-row reveal" style="transition-delay:220ms">
@@ -875,7 +934,7 @@
         <div class="review-body">
           <div class="review-top"><span class="review-name">R. Lindqvist</span><span class="review-stars mono">★★★★★</span></div>
           <p class="review-quote">"We moved twice with our dresser and the drawers still glide like the day it arrived. Worth every week of the lead time."</p>
-          <div class="review-meta mono">Owner since 2015 · Bedroom Collection</div>
+          <div class="review-meta mono">Owner since 2026 · Bedroom Collection</div>
         </div>
       </div>
       <div class="review-row reveal" style="transition-delay:330ms">
@@ -883,7 +942,7 @@
         <div class="review-body">
           <div class="review-top"><span class="review-name">P. Sancho</span><span class="review-stars mono">★★★★★</span></div>
           <p class="review-quote">"I've refinished furniture my whole life and couldn't find the joinery lines on this cabinet until I went looking for them. That's the whole review."</p>
-          <div class="review-meta mono">Owner since 2021 · Storage Collection</div>
+          <div class="review-meta mono">Owner since 2025 · Storage Collection</div>
         </div>
       </div>
     </div>
@@ -891,11 +950,27 @@
     
   </div>
 </section>
+<section class="cta-section">
+  <div class="wrap">
+    <div class="cta-card reveal">
+      <div class="cta-copy">
+        <div class="eyebrow">Ready When You Are</div>
+        <h2>Bring Your Dream Furniture <em>Into the Room.</em></h2>
+        <p>Tell us the piece you've been picturing — a table, a bed, a whole room's worth of storage — and we'll shape it by hand in the same barn we've worked in since 1994.</p>
+        <a href="#contact" class="cta-btn">Start Your Commission →</a>
+      </div>
+      <div class="cta-visual">
+        <img src="Craftmen-blur.png" alt="Craftsman shaping solid wood by hand in the workshop">
+        
+      </div>
+    </div>
+  </div>
+</section>
 <!-- ՆՈՐ ՀԱՏՎԱԾ: ՏԵՍԱԿԱՆԻ ԵՎ ՍՈՑՑԱՆՑԵՐ -->
 
   
     <!-- Սոցցանցերի հղումներ -->
-    <div class="social-showcase">
+    <div class="social-showcase" id="social">
       <p class="mono">Follow us on social media</p>
       <div class="social-icons-row">
         <!-- Փոխարինեք # հղումները Ձեր էջերի հղումներով -->
@@ -917,7 +992,7 @@
   <div class="wrap">
     <div class="footer-top">
       <div class="footer-brand">
-        <a href="#" class="logo">Holloway <span>&</span> Oak</a>
+        <a href="#herp" class="logo">Holloway <span>&</span> Oak</a>
         <p>Solid hardwood furniture, hand-joined in a converted dairy barn in Brattleboro, Vermont since 1994.</p>
         <div class="swatch-row" title="Our wood species">
           <div class="swatch" style="background:#B08D57"></div>
@@ -928,11 +1003,11 @@
       </div>
       <div class="footer-col">
         <h5>Collection</h5>
-        <a href="#">Seating</a><a href="#">Tables</a><a href="#">Storage</a><a href="#">Bedroom</a>
+        <a href="#collection">Seating</a><a href="#collection">Tables</a><a href="#collection">Storage</a><a href="#">Bedroom</a>
       </div>
       <div class="footer-col">
         <h5>Workshop</h5>
-        <a href="#">Our Craft</a><a href="#">Wood Species</a><a href="#">The Process</a><a href="#">Visit Us</a>
+        <a href="#process">Our Craft</a><a href="#process">Wood Species</a><a href="#process">The Process</a><a href="#social">Visit Us</a>
       </div>
       <div class="footer-col">
         <h5>Get In Touch</h5>
