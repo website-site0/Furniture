@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 <style>
   :root{
     --ink:#1C1815;
@@ -82,6 +83,7 @@
     min-width: 100%;
     height: 100%;
     overflow: hidden;
+    position: relative;
   }
   .carousel-slide img {
     width: 100%;
@@ -95,7 +97,61 @@
   .carousel-wrapper:hover .carousel-slide img {
     transform: scale(1.03);
   }
-  
+
+  /* --- 3D MODEL SLIDE --- */
+ .model-slide {
+  width: 100%;
+  height: 100%;
+  position: relative;
+
+  background-image: url('product-bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+  .model-slide model-viewer {
+    width: 100%;
+    height: 100%;
+    --poster-color: transparent;
+  }
+  .model-hint {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(28, 24, 21, 0.7);
+    backdrop-filter: blur(4px);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--parchment-dim);
+    pointer-events: none;
+    opacity: 0.9;
+    z-index: 5;
+  }
+  .model-hint svg { width: 14px; height: 14px; stroke: var(--brass-bright); }
+  .model-loading-bar {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #100d0b;
+    color: var(--parchment-dim);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: opacity 0.5s ease;
+    z-index: 6;
+  }
+  .model-loading-bar.hidden { opacity: 0; pointer-events: none; }
+
   /* Carousel Controls */
   .carousel-btn {
     position: absolute;
@@ -122,7 +178,7 @@
   }
   .carousel-btn.prev { left: 20px; }
   .carousel-btn.next { right: 20px; }
-  
+
   /* Carousel Dots */
   .carousel-dots {
     display: flex;
@@ -177,7 +233,7 @@
     margin-bottom: 35px;
     font-weight: 300;
   }
-  
+
   /* Specs */
   .product-specs {
     border-top: 1px solid var(--line);
@@ -225,54 +281,171 @@
     transform: translateY(-2px);
   }
 
-  /* ---------- REVIEWS SECTION ---------- */
+  /* ================================================= */
+  /* ---------- REVIEWS SECTION (EDITORIAL) ---------- */
+  /* ================================================= */
   .reviews-section {
-    padding: 100px 0 140px 0;
+    padding: 120px 0 150px 0;
     border-top: 1px solid var(--line);
     margin-top: 60px;
   }
+  .reviews-heading-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 56px;
+    gap: 24px;
+  }
+  .reviews-eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    color: var(--brass-bright);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
   .reviews-title {
-    font-size: 28px;
+    font-size: clamp(28px, 3vw, 40px);
     font-weight: 300;
-    margin-bottom: 40px;
     letter-spacing: -0.01em;
   }
-  .reviews-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 40px;
+  .reviews-count {
+    font-size: 13px;
+    color: var(--parchment-dim);
+    letter-spacing: 0.05em;
+    padding-bottom: 6px;
+    white-space: nowrap;
   }
-  .review-card {
+
+  .reviews-editorial-grid {
+    display: grid;
+    grid-template-columns: 1.75fr 1fr;
+    gap: 48px;
+    align-items: stretch;
+  }
+
+  /* ---- Primary / dominant testimonial ---- */
+  .review-primary {
+    position: relative;
     background: var(--ink-soft);
     border: 1px solid var(--line);
-    padding: 32px;
-    border-radius: 2px;
-  }
-  .review-header {
+    border-left: 2px solid var(--brass);
+    padding: 64px 56px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
+    flex-direction: column;
+    justify-content: center;
   }
-  .reviewer-name {
+  .review-primary .quote-mark {
+    font-family: 'Fraunces', serif;
+    font-size: 90px;
+    line-height: 1;
+    color: var(--brass);
+    opacity: 0.55;
+    font-style: italic;
+    margin-bottom: 4px;
+    user-select: none;
+  }
+  .review-primary .review-stars {
+    color: var(--brass-bright);
+    letter-spacing: 3px;
+    font-size: 14px;
+    margin-bottom: 22px;
+    display: block;
+  }
+  .review-primary .review-body {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(22px, 2vw, 30px);
+    line-height: 1.45;
+    color: var(--parchment);
+    margin-bottom: 36px;
+    max-width: 92%;
+  }
+  .review-primary .review-attribution {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .review-primary .attribution-rule {
+    width: 34px;
+    height: 1px;
+    background: var(--brass);
+  }
+  .review-primary .reviewer-name {
     font-size: 16px;
     font-weight: 500;
+    letter-spacing: 0.02em;
   }
-  .review-stars {
+  .review-primary .reviewer-role {
+    display: block;
+    font-size: 12px;
+    color: var(--parchment-dim);
+    letter-spacing: 0.05em;
+    margin-top: 3px;
+    text-transform: uppercase;
+  }
+
+  /* ---- Secondary testimonial ---- */
+  .review-secondary {
+    background: transparent;
+    border: 1px solid var(--line);
+    padding: 40px 36px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .review-secondary .review-stars {
     color: var(--brass-bright);
     letter-spacing: 2px;
-    font-size: 13px;
+    font-size: 12px;
+    margin-bottom: 18px;
+    display: block;
   }
-  .review-body {
-    font-size: 14px;
+  .review-secondary .review-body {
+    font-size: 14.5px;
     color: var(--parchment-dim);
-    line-height: 1.6;
+    line-height: 1.75;
     font-weight: 300;
+    margin-bottom: 28px;
   }
+  .review-secondary .review-attribution {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+  }
+  .review-secondary .reviewer-name {
+    font-size: 14.5px;
+    font-weight: 500;
+  }
+  .review-secondary .reviewer-role {
+    display: block;
+    font-size: 11px;
+    color: var(--parchment-dim);
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+    text-transform: uppercase;
+  }
+
+  /* ---- Scroll reveal ---- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.9s cubic-bezier(0.25, 1, 0.5, 1), transform 0.9s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-delay-1.is-visible { transition-delay: 0.12s; }
+  .reveal-delay-2.is-visible { transition-delay: 0.24s; }
 
   @media (max-width: 960px) {
     .product-container { grid-template-columns: 1fr; gap: 40px; }
-    .reviews-grid { grid-template-columns: 1fr; gap: 24px; }
+    .reviews-editorial-grid { grid-template-columns: 1fr; gap: 28px; }
+    .review-primary { padding: 44px 32px; }
+    .reviews-heading-row { flex-direction: column; align-items: flex-start; gap: 8px; }
     body { padding-top: 80px; }
   }
 </style>
@@ -293,22 +466,47 @@
 
   <main class="wrap">
     <div class="product-container">
-      
+
       <div class="carousel-wrapper">
         <div class="carousel-viewport">
           <div class="carousel-track" id="carouselTrack">
             <div class="carousel-slide">
-              <img src="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?q=80&w=1000&auto=format&fit=crop" alt="Oak Haven Bed Main View">
+              <img src="Bed-product-gallery.1.png" alt="Oak Haven Bed Main View">
             </div>
             <div class="carousel-slide">
-              <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1000&auto=format&fit=crop" alt="Oak Haven Bed Ambient Perspective">
+              <img src="Bed-product-gallery.2.png" alt="Oak Haven Bed Ambient Perspective">
             </div>
             <div class="carousel-slide">
-              <img src="https://images.unsplash.com/photo-1540518614846-7eded433c457?q=80&w=1000&auto=format&fit=crop" alt="Oak Haven Wood Craftsmanship Profile">
+              <div class="model-slide">
+                <div class="model-loading-bar mono" id="modelLoadingBar">Loading Model…</div>
+                <model-viewer
+                  id="bedModelViewer"
+                  src="1128b88064a9e545dee7238b843d07c7.glb"
+                  alt="3D model of the Oak Haven Bed Frame resting on the floor"
+                  camera-controls
+                  disable-zoom="false"
+                  interaction-prompt="none"
+                  shadow-intensity="1"
+                  shadow-softness="0.9"
+                  exposure="0.85"
+                  tone-mapping="neutral"
+                  environment-image="neutral"
+                  camera-orbit="35deg 78deg 105%"
+                  min-camera-orbit="auto 40deg auto"
+                  max-camera-orbit="auto 100deg auto"
+                  field-of-view="30deg"
+                  camera-target="auto auto auto"
+                  style="background-color: transparent;">
+                </model-viewer>
+                <div class="model-hint mono">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M3 12c0-1.5 4-3 9-3s9 1.5 9 3-4 3-9 3-9-1.5-9-3z"/><path d="M7 9.5V6a5 5 0 0 1 10 0v3.5"/></svg>
+                  Drag to Rotate
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        
+
         <button class="carousel-btn prev" id="prevBtn" aria-label="Previous image">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 19l-7-7 7-7"/></svg>
         </button>
@@ -327,9 +525,9 @@
         <div class="product-eyebrow mono">Collection // Bedroom</div>
         <h1 class="product-main-title serif">Oak Haven Bed Frame</h1>
         <div class="product-price mono">$2,400</div>
-        
+
         <p class="product-description">
-          An architectural centerpiece engineered for timeless architectural presence. Handcrafted from sustainably harvested white oak timber, the Oak Haven features traditional exposed mortise-and-tenon joinery that celebrates raw structural honesty. Each piece is treated with organic oils to pull forward the deep, intricate character of the natural wood grain.
+         Crafted from solid white oak, the Oak Haven brings quiet architectural presence to the bedroom. Traditional joinery and a hand-finished surface let the natural grain define every piece.
         </p>
 
         <div class="product-specs">
@@ -359,29 +557,47 @@
       </div>
     </div>
 
+    <!-- ============ REVIEWS / CLIENT JOURNAL (EDITORIAL REDESIGN) ============ -->
     <section class="reviews-section">
-      <h2 class="reviews-title serif">Client Journal & Reviews</h2>
-      <div class="reviews-grid">
-        
-        <div class="review-card">
-          <div class="review-header">
-            <span class="reviewer-name serif">Julian R.</span>
-            <span class="review-stars">★★★★★</span>
-          </div>
-          <p class="review-body">
-            "The structural joinery detail on the headboard is incredible. It feels immensely solid and beautifully grounds our entire bedroom space. A true architectural masterpiece."
-          </p>
+      <div class="reviews-heading-row reveal">
+        <div>
+          <div class="reviews-eyebrow mono">Client Journal</div>
+          <h2 class="reviews-title serif">Words From the Oak Haven Home</h2>
         </div>
+        <div class="reviews-count mono">02 Featured Reviews</div>
+      </div>
 
-        <div class="review-card">
-          <div class="review-header">
-            <span class="reviewer-name serif">Eleanor G.</span>
-            <span class="review-stars">★★★★★</span>
+      <div class="reviews-editorial-grid">
+
+        <!-- Primary dominant testimonial -->
+        <article class="review-primary reveal">
+          <span class="quote-mark">&ldquo;</span>
+          <span class="review-stars">★★★★★</span>
+          <p class="review-body">
+            The structural joinery detail on the headboard is incredible. It feels immensely solid and beautifully grounds our entire bedroom space. A true architectural masterpiece.
+          </p>
+          <div class="review-attribution">
+            <span class="attribution-rule"></span>
+            <div>
+              <span class="reviewer-name serif">Julian R.</span>
+              <span class="reviewer-role mono">Verified Owner</span>
+            </div>
           </div>
+        </article>
+
+        <!-- Secondary testimonial -->
+        <article class="review-secondary reveal reveal-delay-1">
+          <span class="review-stars">★★★★★</span>
           <p class="review-body">
             "We ordered custom dimensions via Instagram DM and the process was effortless. The finish retains a warm wooden scent and looks exquisite under morning sunlight."
           </p>
-        </div>
+          <div class="review-attribution">
+            <div>
+              <span class="reviewer-name serif">Eleanor G.</span>
+              <span class="reviewer-role mono">Verified Owner</span>
+            </div>
+          </div>
+        </article>
 
       </div>
     </section>
@@ -392,7 +608,7 @@
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     const dots = document.querySelectorAll('.dot');
-    
+
     let currentIndex = 0;
     const totalSlides = dots.length;
 
@@ -416,6 +632,28 @@
     dots.forEach((dot, i) => {
       dot.addEventListener('click', () => updateCarousel(i));
     });
+
+    // Scroll reveal for the Client Journal & Reviews section only
+    const revealEls = document.querySelectorAll('.reviews-section .reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+
+    revealEls.forEach(el => revealObserver.observe(el));
+
+    // 3D model loading indicator
+    const bedModelViewer = document.getElementById('bedModelViewer');
+    const modelLoadingBar = document.getElementById('modelLoadingBar');
+    if (bedModelViewer) {
+      bedModelViewer.addEventListener('load', () => {
+        modelLoadingBar.classList.add('hidden');
+      });
+    }
   </script>
 </body>
 </html>
