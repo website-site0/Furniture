@@ -1,13 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hy">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Oak Haven Bed Frame — Holloway & Oak</title>
+<title>Ննջասենյակի Կոլեկցիա — Holloway & Oak</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+
+<!-- ============================================================
+     THREE.JS IMPORT MAP
+     Loaded once from CDN (ES modules). GLTFLoader comes from the
+     official "addons" examples path that ships with the same
+     three.js version, so there is no version mismatch.
+     ============================================================ -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
 <style>
   :root{
     --ink:#1C1815;
@@ -19,12 +34,12 @@
     --line: rgba(232,223,203,0.22);
   }
   *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
   body{
     background:var(--ink);
     color:var(--parchment);
     font-family:'Instrument Sans', sans-serif;
     overflow-x:hidden;
-    padding-top: 100px;
   }
   .serif{font-family:'Fraunces', serif;}
   .mono{font-family:'IBM Plex Mono', monospace;}
@@ -34,419 +49,364 @@
   header{
     position:fixed;top:0;left:0;right:0;z-index:100;
     padding:26px 0;
-    background: var(--ink);
-    border-bottom: 1px solid var(--line);
+    background:linear-gradient(to bottom, rgba(28,24,21,0.92), rgba(28,24,21,0));
   }
   nav{display:flex;align-items:center;justify-content:space-between;}
   .logo{font-family:'Fraunces', serif;font-size:22px;letter-spacing:0.02em;font-weight:500;text-decoration:none;color:inherit;}
   .logo span{color:var(--brass-bright);font-style:italic;}
-  .back-link {
-    font-size: 13px;
-    text-decoration: none;
-    color: var(--parchment-dim);
-    transition: color 0.3s;
+
+  /* ---------- HERO VIDEO SECTION ---------- */
+  .hero-video-container {
+    position: relative;
+    width: 100%;
+    height: 120vh;
+    background: #000;
     display: flex;
     align-items: center;
-    gap: 8px;
-  }
-  .back-link:hover { color: var(--brass-bright); }
-
-  /* ---------- PRODUCT CONTAINER ---------- */
-  .product-container {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 60px;
-    padding: 60px 0;
-  }
-
-  /* --- LEFT COLUMN: CAROUSEL --- */
-  .carousel-wrapper {
-    position: relative;
-    width: 100%;
-  }
-  .carousel-viewport {
-    width: 100%;
-    aspect-ratio: 4/3;
+    justify-content: center;
     overflow: hidden;
-    position: relative;
-    border: 1px solid var(--line);
-    border-radius: 2px;
-    background: #111;
   }
-  .carousel-track {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-  }
-  .carousel-slide {
-    min-width: 100%;
-    height: 100%;
-    overflow: hidden;
-    position: relative;
-  }
-  .carousel-slide img {
+  .hero-video-container video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: brightness(0.85) contrast(1.02);
-    display: block;
-    transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    filter: brightness(0.7) sepia(10%);
   }
-  /* Elegant slow-zoom on active hover */
-  .carousel-wrapper:hover .carousel-slide img {
-    transform: scale(1.03);
-  }
-
-  /* --- 3D MODEL SLIDE --- */
- .model-slide {
-  width: 100%;
-  height: 100%;
-  position: relative;
-
-  background-image: url('product-bg.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-  .model-slide model-viewer {
-    width: 100%;
-    height: 100%;
-    --poster-color: transparent;
-  }
-  .model-hint {
-    position: absolute;
-    bottom: 16px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    background: rgba(28, 24, 21, 0.7);
-    backdrop-filter: blur(4px);
-    border: 1px solid var(--line);
-    border-radius: 20px;
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--parchment-dim);
-    pointer-events: none;
-    opacity: 0.9;
-    z-index: 5;
-  }
-  .model-hint svg { width: 14px; height: 14px; stroke: var(--brass-bright); }
-  .model-loading-bar {
+  /* Մութ էֆեկտ վիդեոյի վրա */
+  .hero-video-container::after {
+    content: '';
     position: absolute;
     inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #100d0b;
-    color: var(--parchment-dim);
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    transition: opacity 0.5s ease;
-    z-index: 6;
+    background: rgba(28, 24, 21, 0.3);
+    z-index: 2;
   }
-  .model-loading-bar.hidden { opacity: 0; pointer-events: none; }
 
-  /* Carousel Controls */
-  .carousel-btn {
+  /* Succession Անիմացիոն Տեքստ / Կոճակ */
+  .succession-intro {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    max-width: 700px;
+    padding: 0 20px;
+  }
+  .succession-title {
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 300;
+    margin-bottom: 20px;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUpSuccession 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards 0.5s;
+  }
+  .succession-title em {
+    color: var(--brass-bright);
+    font-style: italic;
+  }
+
+  /* [Design yours] Կենտրոնական Սլաքով Կոճակ */
+  .design-yours-btn {
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(28, 24, 21, 0.75);
-    backdrop-filter: blur(4px);
-    border: 1px solid var(--line);
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
+    bottom: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    background: none;
+    border: none;
     color: var(--parchment);
     cursor: pointer;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    text-decoration: none;
+    opacity: 0;
+    transition: cubic-bezier(0.2, 0.8, 0.2, 1) 0.4s;
+  }
+  /* Այս դասը կավելանա JS-ով, երբ վիդեոն ավարտվի */
+  .design-yours-btn.show-btn {
+    opacity: 1;
+    animation: bounceSlow 2s infinite ease-in-out;
+  }
+  .design-yours-btn:hover {
+    color: var(--brass-bright);
+  }
+  .design-yours-btn .btn-circle {
+    width: 54px;
+    height: 54px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 10;
+    background: rgba(28, 24, 21, 0.6);
+    backdrop-filter: blur(4px);
     transition: all 0.3s ease;
   }
-  .carousel-btn:hover {
+  .design-yours-btn:hover .btn-circle {
     border-color: var(--brass-bright);
-    color: var(--brass-bright);
+    box-shadow: 0 0 15px rgba(201,168,118,0.3);
+  }
+
+  /* Keyframes Անիմացիաներ */
+  @keyframes fadeUpSuccession {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes bounceSlow {
+    0%, 100% { transform: translate(-50%, 0); }
+    50% { transform: translate(-50%, -10px); }
+  }
+
+  /* ---------- PRODUCTS GRID SECTION ---------- */
+  .products-section {
+    padding: 120px 0;
     background: var(--ink);
-  }
-  .carousel-btn.prev { left: 20px; }
-  .carousel-btn.next { right: 20px; }
-
-  /* Carousel Dots */
-  .carousel-dots {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 24px;
-  }
-  .dot {
-    width: 6px;
-    height: 6px;
-    border: 1px solid var(--line);
-    border-radius: 50%;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-  }
-  .dot.active {
-    background: var(--brass-bright);
-    border-color: var(--brass-bright);
-    transform: scale(1.3);
-  }
-
-  /* --- RIGHT COLUMN: DETAILS --- */
-  .product-details {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  .product-eyebrow {
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    color: var(--brass-bright);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-  .product-main-title {
-    font-size: clamp(32px, 3.5vw, 48px);
-    font-weight: 300;
-    line-height: 1.1;
-    margin-bottom: 16px;
-    letter-spacing: -0.01em;
-  }
-  .product-price {
-    font-size: 24px;
-    color: var(--brass-bright);
-    margin-bottom: 30px;
-    font-weight: 400;
-  }
-  .product-description {
-    font-size: 15px;
-    color: var(--parchment-dim);
-    line-height: 1.7;
-    margin-bottom: 35px;
-    font-weight: 300;
-  }
-
-  /* Specs */
-  .product-specs {
     border-top: 1px solid var(--line);
-    padding-top: 24px;
-    margin-bottom: 40px;
   }
-  .spec-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
-    font-size: 13.5px;
-    border-bottom: 1px solid rgba(232,223,203,0.05);
+  .section-head {
+    margin-bottom: 60px;
   }
-  .spec-label { color: var(--parchment-dim); font-weight: 300; }
-  .spec-value { color: var(--parchment); font-weight: 400; }
-
-  /* INSTAGRAM ORDER BUTTON */
-  .instagram-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    width: 100%;
-    padding: 18px;
-    background: transparent;
-    border: 1px solid var(--brass);
-    color: var(--parchment);
-    text-transform: uppercase;
-    font-size: 13px;
-    letter-spacing: 0.15em;
-    text-decoration: none;
-    border-radius: 2px;
-    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-  .instagram-btn svg {
-    width: 18px;
-    height: 18px;
-    fill: currentColor;
-  }
-  .instagram-btn:hover {
-    border-color: var(--brass-bright);
-    background: var(--brass);
-    color: var(--ink);
-    box-shadow: 0 10px 25px rgba(201, 168, 118, 0.15);
-    transform: translateY(-2px);
-  }
-
-  /* ================================================= */
-  /* ---------- REVIEWS SECTION (EDITORIAL) ---------- */
-  /* ================================================= */
-  .reviews-section {
-    padding: 120px 0 150px 0;
-    border-top: 1px solid var(--line);
-    margin-top: 60px;
-  }
-  .reviews-heading-row {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    margin-bottom: 56px;
-    gap: 24px;
-  }
-  .reviews-eyebrow {
-    font-size: 12px;
-    letter-spacing: 0.14em;
-    color: var(--brass-bright);
-    text-transform: uppercase;
-    margin-bottom: 14px;
-  }
-  .reviews-title {
-    font-size: clamp(28px, 3vw, 40px);
-    font-weight: 300;
-    letter-spacing: -0.01em;
-  }
-  .reviews-count {
-    font-size: 13px;
-    color: var(--parchment-dim);
-    letter-spacing: 0.05em;
-    padding-bottom: 6px;
-    white-space: nowrap;
-  }
-
-  .reviews-editorial-grid {
-    display: grid;
-    grid-template-columns: 1.75fr 1fr;
-    gap: 48px;
-    align-items: stretch;
-  }
-
-  /* ---- Primary / dominant testimonial ---- */
-  .review-primary {
-    position: relative;
-    background: var(--ink-soft);
-    border: 1px solid var(--line);
-    border-left: 2px solid var(--brass);
-    padding: 64px 56px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  .review-primary .quote-mark {
-    font-family: 'Fraunces', serif;
-    font-size: 90px;
-    line-height: 1;
-    color: var(--brass);
-    opacity: 0.55;
-    font-style: italic;
-    margin-bottom: 4px;
-    user-select: none;
-  }
-  .review-primary .review-stars {
-    color: var(--brass-bright);
-    letter-spacing: 3px;
-    font-size: 14px;
-    margin-bottom: 22px;
-    display: block;
-  }
-  .review-primary .review-body {
-    font-family: 'Fraunces', serif;
-    font-weight: 300;
-    font-style: italic;
-    font-size: clamp(22px, 2vw, 30px);
-    line-height: 1.45;
-    color: var(--parchment);
-    margin-bottom: 36px;
-    max-width: 92%;
-  }
-  .review-primary .review-attribution {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .review-primary .attribution-rule {
-    width: 34px;
-    height: 1px;
-    background: var(--brass);
-  }
-  .review-primary .reviewer-name {
-    font-size: 16px;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-  }
-  .review-primary .reviewer-role {
-    display: block;
-    font-size: 12px;
-    color: var(--parchment-dim);
-    letter-spacing: 0.05em;
-    margin-top: 3px;
-    text-transform: uppercase;
-  }
-
-  /* ---- Secondary testimonial ---- */
-  .review-secondary {
-    background: transparent;
-    border: 1px solid var(--line);
-    padding: 40px 36px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  .review-secondary .review-stars {
-    color: var(--brass-bright);
-    letter-spacing: 2px;
-    font-size: 12px;
-    margin-bottom: 18px;
-    display: block;
-  }
-  .review-secondary .review-body {
-    font-size: 14.5px;
-    color: var(--parchment-dim);
-    line-height: 1.75;
-    font-weight: 300;
-    margin-bottom: 28px;
-  }
-  .review-secondary .review-attribution {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border-top: 1px solid var(--line);
-    padding-top: 20px;
-  }
-  .review-secondary .reviewer-name {
-    font-size: 14.5px;
-    font-weight: 500;
-  }
-  .review-secondary .reviewer-role {
-    display: block;
+  .eyebrow {
     font-size: 11px;
-    color: var(--parchment-dim);
-    letter-spacing: 0.05em;
-    margin-top: 2px;
+    letter-spacing: 0.15em;
+    color: var(--brass-bright);
     text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
   }
+  .eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--brass); }
 
-  /* ---- Scroll reveal ---- */
-  .reveal {
-    opacity: 0;
-    transform: translateY(28px);
-    transition: opacity 0.9s cubic-bezier(0.25, 1, 0.5, 1), transform 0.9s cubic-bezier(0.25, 1, 0.5, 1);
+  .grid-layout {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
   }
-  .reveal.is-visible {
-    opacity: 1;
-    transform: translateY(0);
+  .product-card {
+    border: 1px solid var(--line);
+    background: var(--ink-soft);
+    border-radius: 2px;
+    overflow: hidden;
+    transition: all 0.4s ease;
   }
-  .reveal-delay-1.is-visible { transition-delay: 0.12s; }
-  .reveal-delay-2.is-visible { transition-delay: 0.24s; }
+  .product-card:hover {
+    border-color: var(--brass-bright);
+    transform: translateY(-5px);
+  }
+  .product-img-box {
+    width: 100%;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+    background: #000;
+  }
+  .product-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+  .product-card:hover .product-img-box img {
+    transform: scale(1.05);
+  }
+  .product-info {
+    padding: 24px;
+  }
+  .product-title {
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 8px;
+  }
+  .product-desc {
+    font-size: 14px;
+    color: var(--parchment-dim);
+    line-height: 1.6;
+    margin-bottom: 18px;
+  }
+  .product-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+  }
+  .price {
+    font-size: 18px;
+    color: var(--brass-bright);
+  }
+  /* ---------- 3D ՄԻՆԻՄԱԼԻՍՏԱԿԱՆ ՈՃԵՐ ---------- */
+.products-section {
+  padding: 140px 0;
+  background: var(--ink);
+  border-top: 1px solid var(--line);
+  /* Ապահովում է 3D խորությունը */
+  perspective: 1200px;
+}
 
-  @media (max-width: 960px) {
-    .product-container { grid-template-columns: 1fr; gap: 40px; }
-    .reviews-editorial-grid { grid-template-columns: 1fr; gap: 28px; }
-    .review-primary { padding: 44px 32px; }
-    .reviews-heading-row { flex-direction: column; align-items: flex-start; gap: 8px; }
-    body { padding-top: 80px; }
+.grid-layout {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+
+.product-card {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  background: transparent;
+}
+
+/* 3D Շերտ */
+.product-3d-wrapper {
+  background: var(--ink-soft);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* Hover անելիս ամբողջ քարտը մոտենում է 3D-ով */
+.product-card:hover .product-3d-wrapper {
+  transform: translateZ(20px) rotateX(2deg) rotateY(-2deg);
+  border-color: var(--brass-bright);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 25px rgba(201, 168, 118, 0.08);
+}
+
+.product-img-box {
+  width: 100%;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  background: #111;
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.product-img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(15%) brightness(0.9);
+  transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1), filter 0.4s ease;
+}
+
+/* Hover-ի ժամանակ նկարը սահուն խորանում է */
+.product-card:hover .product-img-box img {
+  transform: scale(1.04) translateZ(10px);
+  filter: grayscale(0%) brightness(1);
+}
+
+/* 3D canvas fills exactly the same box the <img> used to occupy,
+   preserving the identical aspect-ratio / crop footprint. The
+   subtle desaturation + brighten-on-hover treatment is carried
+   over from the original image styling so the hover feel is
+   unchanged; the actual scale/rotation-speed bump on hover is
+   handled by the ModelViewer instance itself (see script below)
+   so we do NOT also transform the canvas via CSS (that would
+   double up with the WebGL scale animation). */
+.product-img-box canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: grayscale(15%) brightness(0.9);
+  transition: filter 0.4s ease;
+}
+
+.product-card:hover .product-img-box canvas {
+  filter: grayscale(0%) brightness(1);
+}
+
+.product-info {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  transform: translateZ(15px); /* 3D pop-out տեքստի համար */
+}
+
+.product-title {
+  font-size: 22px;
+  font-weight: 300;
+  margin-bottom: 12px;
+  letter-spacing: 0.02em;
+  transition: color 0.3s ease;
+}
+
+.product-card:hover .product-title {
+  color: var(--brass-bright);
+}
+
+.product-desc {
+  font-size: 13.5px;
+  color: var(--parchment-dim);
+  line-height: 1.6;
+  font-weight: 300;
+  margin-bottom: 24px;
+  flex-grow: 1;
+}
+
+.product-meta {
+  border-top: 1px solid rgba(232,223,203,0.1);
+  padding-top: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.price {
+  font-size: 17px;
+  color: var(--brass-bright);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+/* ---------- ՍՔՐՈԼԻ ԱՆԻՄԱՑԻԱ (ՏՈՂ ԱՌ ՏՈՂ) ---------- */
+.reveal-item {
+  opacity: 0;
+  transform: translateY(40px) rotateX(-5deg);
+  transition: opacity 1s cubic-bezier(0.215, 0.610, 0.355, 1), transform 1s cubic-bezier(0.215, 0.610, 0.355, 1);
+}
+
+.reveal-item.active {
+  opacity: 1;
+  transform: translateY(0) rotateX(0);
+}
+
+@media (max-width: 900px) {
+  .grid-layout { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .products-section { padding: 80px 0; }
+}
+@media (max-width: 600px) {
+  .grid-layout { grid-template-columns: 1fr; }
+}
+  .order-link {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--brass);
+    padding-bottom: 2px;
+    transition: color 0.3s;
+  }
+  .order-link:hover { color: var(--brass-bright); }
+
+  @media (max-width: 900px) {
+    .grid-layout { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .grid-layout { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -456,204 +416,467 @@
     <div class="wrap">
       <nav>
         <a href="index.html" class="logo">Holloway <span>&</span> Oak</a>
-        <a href="bedroom.html" class="back-link mono">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-          Back to Collection
-        </a>
       </nav>
     </div>
   </header>
 
-  <main class="wrap">
-    <div class="product-container">
+  <div class="hero-video-container">
+    <video id="collectionVideo" autoplay muted playsinline>
+      <source src="absolutely-static-camera-locked-tripod-shot-no-cam (2) (1) (1)-ezremove.mp4" type="video/mp4">
+      Ձեր բրաուզերը չի աջակցում վիդեո թեգը:
+    </video>
 
-      <div class="carousel-wrapper">
-        <div class="carousel-viewport">
-          <div class="carousel-track" id="carouselTrack">
-            <div class="carousel-slide">
-              <img src="Bed-product-gallery.1.png" alt="Oak Haven Bed Main View">
-            </div>
-            <div class="carousel-slide">
-              <img src="Bed-product-gallery.2.png" alt="Oak Haven Bed Ambient Perspective">
-            </div>
-            <div class="carousel-slide">
-              <div class="model-slide">
-                <div class="model-loading-bar mono" id="modelLoadingBar">Loading Model…</div>
-                <model-viewer
-                  id="bedModelViewer"
-                  src="bed-fixed.glb"
-                  alt="3D model of the Oak Haven Bed Frame resting on the floor"
-                  camera-controls
-                  disable-zoom="false"
-                  interaction-prompt="none"
-                  shadow-intensity="1"
-                  shadow-softness="0.9"
-                  exposure="0.85"
-                  tone-mapping="neutral"
-                  environment-image="neutral"
-                  camera-orbit="35deg 78deg 105%"
-                  min-camera-orbit="auto 40deg auto"
-                  max-camera-orbit="auto 100deg auto"
-                  field-of-view="30deg"
-                  camera-target="auto auto auto"
-                  style="background-color: transparent;">
-                </model-viewer>
-                <div class="model-hint mono">
-                  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M3 12c0-1.5 4-3 9-3s9 1.5 9 3-4 3-9 3-9-1.5-9-3z"/><path d="M7 9.5V6a5 5 0 0 1 10 0v3.5"/></svg>
-                  Drag to Rotate
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <button class="carousel-btn prev" id="prevBtn" aria-label="Previous image">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 19l-7-7 7-7"/></svg>
-        </button>
-        <button class="carousel-btn next" id="nextBtn" aria-label="Next image">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5l7 7-7 7"/></svg>
-        </button>
-
-        <div class="carousel-dots" id="carouselDots">
-          <span class="dot active"></span>
-          <span class="dot"></span>
-          <span class="dot"></span>
-        </div>
-      </div>
-
-      <div class="product-details">
-        <div class="product-eyebrow mono">Collection // Bedroom</div>
-        <h1 class="product-main-title serif">Oak Haven Bed Frame</h1>
-        <div class="product-price mono">$2,400</div>
-
-        <p class="product-description">
-         Crafted from solid white oak, the Oak Haven brings quiet architectural presence to the bedroom. Traditional joinery and a hand-finished surface let the natural grain define every piece.
-        </p>
-
-        <div class="product-specs">
-          <div class="spec-item">
-            <span class="spec-label">Material</span>
-            <span class="spec-value">Solid White Oak</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-label">Finish</span>
-            <span class="spec-value">Hand-Rubbed Natural Oil & Wax Blend</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-label">Dimensions</span>
-            <span class="spec-value">Queen / King / Cal King</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-label">Origin</span>
-            <span class="spec-value">100% Benchmade Artisan Handcrafted</span>
-          </div>
-        </div>
-
-        <a href="https://instagram.com" target="_blank" class="instagram-btn mono">
-          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
-          Order via Instagram
-        </a>
-
-      </div>
+    <div class="succession-intro">
+      <h1 class="succession-title serif">Ննջասենյակի<br><em>Հանգստության Կոլեկցիա</em></h1>
     </div>
 
-    <!-- ============ REVIEWS / CLIENT JOURNAL (EDITORIAL REDESIGN) ============ -->
-    <section class="reviews-section">
-      <div class="reviews-heading-row reveal">
-        <div>
-          <div class="reviews-eyebrow mono">Client Journal</div>
-          <h2 class="reviews-title serif">Words From the Oak Haven Home</h2>
+    <a href="#products-list" id="designYoursBtn" class="design-yours-btn mono">
+      <span>Design yours</span>
+      <div class="btn-circle">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </div>
+    </a>
+  </div>
+
+<section id="products-list" class="products-section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Handcrafted Selection</div>
+      <h2 class="serif" style="font-size: clamp(28px, 3vw, 42px); font-weight:400; color: var(--parchment);">The Oak & Walnut Collection</h2>
+    </div>
+
+    <div class="grid-layout">
+
+      <div class="product-card reveal-item" onclick="window.location.href='product-bed.html';">
+        <div class="product-3d-wrapper">
+          <div class="product-img-box" data-model-viewer>
+            <canvas class="model-canvas" aria-label="Oak Haven Bed Frame 3D preview"></canvas>
+          </div>
+          <div class="product-info">
+            <h3 class="product-title serif">Oak Haven Bed Frame</h3>
+            <p class="product-desc">Masterfully forged from solid white oak using traditional mortise-and-tenon joinery for heirloom longevity.</p>
+            <div class="product-meta mono">
+              <span class="price">$2,400</span>
+            </div>
+          </div>
         </div>
-        <div class="reviews-count mono">02 Featured Reviews</div>
       </div>
 
-      <div class="reviews-editorial-grid">
-
-        <!-- Primary dominant testimonial -->
-        <article class="review-primary reveal">
-          <span class="quote-mark">&ldquo;</span>
-          <span class="review-stars">★★★★★</span>
-          <p class="review-body">
-            The structural joinery detail on the headboard is incredible. It feels immensely solid and beautifully grounds our entire bedroom space. A true architectural masterpiece.
-          </p>
-          <div class="review-attribution">
-            <span class="attribution-rule"></span>
-            <div>
-              <span class="reviewer-name serif">Julian R.</span>
-              <span class="reviewer-role mono">Verified Owner</span>
+      <div class="product-card reveal-item" onclick="window.location.href='product-bed.html';">
+        <div class="product-3d-wrapper">
+          <div class="product-img-box" data-model-viewer>
+            <canvas class="model-canvas" aria-label="Heritage Bedside Nightstand 3D preview"></canvas>
+          </div>
+          <div class="product-info">
+            <h3 class="product-title serif">Heritage Bedside Nightstand</h3>
+            <p class="product-desc">Features a hand-rubbed oil finish, silent under-mount glides, and solid weathered brass hardware.</p>
+            <div class="product-meta mono">
+              <span class="price">$650</span>
             </div>
           </div>
-        </article>
-
-        <!-- Secondary testimonial -->
-        <article class="review-secondary reveal reveal-delay-1">
-          <span class="review-stars">★★★★★</span>
-          <p class="review-body">
-            "We ordered custom dimensions via Instagram DM and the process was effortless. The finish retains a warm wooden scent and looks exquisite under morning sunlight."
-          </p>
-          <div class="review-attribution">
-            <div>
-              <span class="reviewer-name serif">Eleanor G.</span>
-              <span class="reviewer-role mono">Verified Owner</span>
-            </div>
-          </div>
-        </article>
-
+        </div>
       </div>
-    </section>
-  </main>
+
+      <div class="product-card reveal-item" onclick="window.location.href='product-bed.html';">
+        <div class="product-3d-wrapper">
+          <div class="product-img-box" data-model-viewer>
+            <canvas class="model-canvas" aria-label="Classic Walnut Dresser 3D preview"></canvas>
+          </div>
+          <div class="product-info">
+            <h3 class="product-title serif">Classic Walnut Dresser</h3>
+            <p class="product-desc">Six spacious dovetail drawers built entirely from native walnut timber, detailed with clean architectural profiles.</p>
+            <div class="product-meta mono">
+              <span class="price">$1,850</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 
   <script>
-    const track = document.getElementById('carouselTrack');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const dots = document.querySelectorAll('.dot');
 
-    let currentIndex = 0;
-    const totalSlides = dots.length;
+  document.addEventListener("DOMContentLoaded", () => {
+    const items = document.querySelectorAll('.reveal-item');
 
-    function updateCarousel(index) {
-      track.style.transform = `translateX(-${index * 100}%)`;
-      dots.forEach(dot => dot.classList.remove('active'));
-      dots[index].classList.add('active');
-      currentIndex = index;
-    }
+    const observerOptions = {
+      threshold: 0.15,
+      rootMargin: "0px 0px -50px 0px"
+    };
 
-    nextBtn.addEventListener('click', () => {
-      let index = (currentIndex + 1) % totalSlides;
-      updateCarousel(index);
-    });
-
-    prevBtn.addEventListener('click', () => {
-      let index = (currentIndex - 1 + totalSlides) % totalSlides;
-      updateCarousel(index);
-    });
-
-    dots.forEach((dot, i) => {
-      dot.addEventListener('click', () => updateCarousel(i));
-    });
-
-    // Scroll reveal for the Client Journal & Reviews section only
-    const revealEls = document.querySelectorAll('.reviews-section .reveal');
-    const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
+    const itemObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry, index) => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          revealObserver.unobserve(entry.target);
+          // Գտնում ենք տվյալ էլեմենտի ինդեքսը իր շարքում տող առ տող անիմացիայի համար
+          const card = entry.target;
+
+          // Ավելացնում ենք մեղմ ուշացում (delay) ամեն հաջորդ քարտի համար
+          const elementIndex = Array.from(items).indexOf(card);
+          const delay = (elementIndex % 3) * 150; // 0ms, 150ms, 300ms
+
+          card.style.transitionDelay = `${delay}ms`;
+          card.classList.add('active');
+
+          // Սկրինից դուրս գալուց հետո էլ չանհետանա
+          observer.unobserve(card);
         }
       });
-    }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+    }, observerOptions);
 
-    revealEls.forEach(el => revealObserver.observe(el));
+    items.forEach(item => itemObserver.observe(item));
+  });
+    const video = document.getElementById('collectionVideo');
+    const btn = document.getElementById('designYoursBtn');
 
-    // 3D model loading indicator
-    const bedModelViewer = document.getElementById('bedModelViewer');
-    const modelLoadingBar = document.getElementById('modelLoadingBar');
-    if (bedModelViewer) {
-      bedModelViewer.addEventListener('load', () => {
-        modelLoadingBar.classList.add('hidden');
+    // Երբ վիդեոն ավարտվի, Succession էֆեկտով հայտնվում է [Design yours] կոճակը
+    video.onended = function() {
+      btn.classList.add('show-btn');
+    };
+
+    // Ապահովագրություն. եթե ինչ-որ պատճառով վիդեոն չխաղա կամ երկար տևի,
+    // կոճակը 3 վայրկյան անց ամեն դեպքում կհայտնվի
+    setTimeout(() => {
+      btn.classList.add('show-btn');
+    }, 6000);
+  </script>
+
+  <!-- ============================================================
+       3D PRODUCT CARD VIEWER
+       ------------------------------------------------------------
+       - Loads ./white_mesh.glb exactly ONCE (shared GLTFLoader
+         promise, cached scene graph).
+       - Every product card gets its own cloned instance of the
+         mesh, its own scene/camera/renderer, so cards can rotate
+         independently and be hovered independently.
+       - Rendering is paused via IntersectionObserver whenever a
+         card scrolls off-screen, and resumed when it re-enters
+         the viewport, to keep the page at 60 FPS.
+       - No OrbitControls / user interaction: the model sits still
+         at rest. Hovering a card spins it slowly; moving the
+         cursor away eases it smoothly back to that exact starting
+         pose (it never keeps spinning on its own).
+       ============================================================ -->
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+    /* ---------------------------------------------------------
+       Shared, single-load model cache
+       --------------------------------------------------------- */
+    const MODEL_URL = 'compressed.glb';
+    let modelLoadPromise = null;
+
+    /**
+     * Loads the GLB exactly once for the whole page and returns a
+     * promise that resolves to the original (un-cloned) scene.
+     * Every caller gets the SAME promise, so the network request
+     * / parse only ever happens a single time no matter how many
+     * product cards ask for it.
+     */
+    function loadModelOnce() {
+      if (!modelLoadPromise) {
+        const loader = new GLTFLoader();
+        modelLoadPromise = new Promise((resolve, reject) => {
+          loader.load(
+            MODEL_URL,
+            (gltf) => resolve(gltf.scene),
+            undefined,
+            (err) => reject(err)
+          );
+        });
+      }
+      return modelLoadPromise;
+    }
+
+    /* ---------------------------------------------------------
+       ModelViewer
+       One instance per .product-img-box. Encapsulates its own
+       renderer / scene / camera / lighting / animation loop, and
+       cleans up fully via dispose().
+       --------------------------------------------------------- */
+    class ModelViewer {
+      constructor(container, canvas) {
+        this.container = container;
+        this.canvas = canvas;
+
+        this.rotationSpeed = 0.175;   // rad/s while hovered, within the 0.15-0.2 spec
+
+        this.currentScale = 1;
+        this.targetScale = 1;
+
+        this.model = null;
+        this.isVisible = false;      // is the card currently in the viewport
+        this.isHovered = false;      // is the cursor currently over the card
+        this.isReturning = false;    // easing rotation back to the starting pose
+        this.frameId = null;
+        this.clock = new THREE.Clock();
+
+        this._resizeHandler = this.onResize.bind(this);
+        this._tick = this.tick.bind(this);
+
+        this.initScene();
+        this.attachModel();
+        window.addEventListener('resize', this._resizeHandler);
+      }
+
+      initScene() {
+        const { clientWidth: w, clientHeight: h } = this.container;
+
+        this.renderer = new THREE.WebGLRenderer({
+          canvas: this.canvas,
+          alpha: true,
+          antialias: true
+        });
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        this.renderer.setSize(w, h, false);
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        // Physically correct-leaning output for a premium look.
+        this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+        this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        this.renderer.toneMappingExposure = 1.1;
+
+        this.scene = new THREE.Scene();
+
+        this.camera = new THREE.PerspectiveCamera(35, w / h, 0.1, 100);
+        this.camera.position.set(0, 0, 4.2);
+
+        // Soft ambient fill + a single key directional light with
+        // subtle shadow for depth, per spec.
+        const ambient = new THREE.AmbientLight(0xffffff, 0.7);
+        this.scene.add(ambient);
+
+        const keyLight = new THREE.DirectionalLight(0xfff2df, 1.4);
+        keyLight.position.set(3, 4, 5);
+        keyLight.castShadow = true;
+        keyLight.shadow.mapSize.set(512, 512);
+        keyLight.shadow.camera.near = 0.5;
+        keyLight.shadow.camera.far = 10;
+        this.scene.add(keyLight);
+
+        const rimLight = new THREE.DirectionalLight(0xd9c7ff, 0.35);
+        rimLight.position.set(-4, 2, -3);
+        this.scene.add(rimLight);
+      }
+
+      async attachModel() {
+        try {
+          const original = await loadModelOnce();
+          const clone = original.clone(true);
+
+          // Ensure cloned meshes keep their own material instances
+          // where needed and can cast/receive soft shadows.
+          clone.traverse((node) => {
+            if (node.isMesh) {
+              node.castShadow = true;
+              node.receiveShadow = true;
+            }
+          });
+
+          // Center the model at the origin and scale it so it
+          // always fits neatly inside the card regardless of the
+          // source model's native dimensions.
+          const box = new THREE.Box3().setFromObject(clone);
+          const size = new THREE.Vector3();
+          const center = new THREE.Vector3();
+          box.getSize(size);
+          box.getCenter(center);
+
+          clone.position.sub(center); // re-center to origin
+
+          const maxDim = Math.max(size.x, size.y, size.z) || 1;
+          const desiredSize = 1.8;
+          const scaleFactor = desiredSize / maxDim;
+          clone.scale.setScalar(scaleFactor);
+
+          this.model = clone;
+          this.model.scale.multiplyScalar(this.currentScale === 1 ? 1 : this.currentScale);
+          this.scene.add(this.model);
+
+          // Store the fitted base scale so hover scaling (1.05x)
+          // multiplies from the correct baseline instead of the
+          // model's raw geometry scale.
+          this.baseScale = scaleFactor;
+          this.model.scale.setScalar(this.baseScale);
+
+          // Draw one static frame right away so the card shows the
+          // model's resting pose immediately, without needing a
+          // hover to trigger the first render.
+          this.renderer.render(this.scene, this.camera);
+        } catch (err) {
+          console.error('Failed to load 3D model for product card:', err);
+        }
+      }
+
+      setVisible(visible) {
+        this.isVisible = visible;
+        this.updateLoopState();
+      }
+
+      /**
+       * Rotation only happens while the card is actively hovered.
+       * On mouse-leave we don't just freeze in place — we ease the
+       * model smoothly back to its original starting rotation
+       * (0 rad), so every card always returns to the exact same
+       * "resting" pose it started in.
+       */
+      setHovered(hovered) {
+        this.isHovered = hovered;
+        this.targetScale = hovered ? 1.05 : 1;
+        if (!hovered) {
+          this.isReturning = true;
+        }
+        this.updateLoopState();
+      }
+
+      /**
+       * Starts or stops the render loop based on current state.
+       * The loop only needs to run while the card is visible AND
+       * either being hovered (actively spinning) or easing back to
+       * its starting rotation. Otherwise the canvas just sits on
+       * its last rendered (static) frame — zero wasted GPU work.
+       */
+      updateLoopState() {
+        const shouldRun = this.isVisible && (this.isHovered || this.isReturning);
+        if (shouldRun && this.frameId === null) {
+          this.clock.start();
+          this.frameId = requestAnimationFrame(this._tick);
+        } else if (!shouldRun && this.frameId !== null) {
+          cancelAnimationFrame(this.frameId);
+          this.frameId = null;
+        }
+      }
+
+      stop() {
+        if (this.frameId !== null) {
+          cancelAnimationFrame(this.frameId);
+          this.frameId = null;
+        }
+      }
+
+      tick() {
+        this.frameId = requestAnimationFrame(this._tick);
+
+        const delta = this.clock.getDelta();
+
+        // Ease the hover scale toward its target for a subtle,
+        // non-jarring response instead of an instant snap.
+        this.currentScale += (this.targetScale - this.currentScale) * Math.min(delta * 4, 1);
+
+        if (this.model) {
+          if (this.isHovered) {
+            // Actively spinning while the cursor is over the card.
+            this.model.rotation.y += this.rotationSpeed * delta;
+          } else if (this.isReturning) {
+            // Ease back to the nearest equivalent of the starting
+            // rotation (0 rad), then snap exactly to 0 and stop.
+            const twoPi = Math.PI * 2;
+            const nearestStart = Math.round(this.model.rotation.y / twoPi) * twoPi;
+            const diff = nearestStart - this.model.rotation.y;
+            if (Math.abs(diff) < 0.001) {
+              this.model.rotation.y = 0;
+              this.isReturning = false;
+            } else {
+              this.model.rotation.y += diff * Math.min(delta * 6, 1);
+            }
+          }
+
+          const s = (this.baseScale || 1) * this.currentScale;
+          this.model.scale.setScalar(s);
+        }
+
+        this.renderer.render(this.scene, this.camera);
+
+        // Nothing left to animate this frame — stop the loop so the
+        // canvas sits idle instead of rendering identical frames.
+        if (!this.isHovered && !this.isReturning) {
+          this.stop();
+        }
+      }
+
+      onResize() {
+        const { clientWidth: w, clientHeight: h } = this.container;
+        if (w === 0 || h === 0) return;
+        this.camera.aspect = w / h;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(w, h, false);
+
+        // Re-render a static frame immediately after a resize so the
+        // card doesn't go blank while idle (loop may not be running).
+        if (this.model) {
+          this.renderer.render(this.scene, this.camera);
+        }
+      }
+
+      dispose() {
+        this.stop();
+        window.removeEventListener('resize', this._resizeHandler);
+
+        if (this.model) {
+          this.model.traverse((node) => {
+            if (node.isMesh) {
+              node.geometry?.dispose();
+              if (Array.isArray(node.material)) {
+                node.material.forEach((m) => m.dispose());
+              } else {
+                node.material?.dispose();
+              }
+            }
+          });
+          this.scene.remove(this.model);
+        }
+
+        this.renderer.dispose();
+      }
+    }
+
+    /* ---------------------------------------------------------
+       Wire up every product card on the page:
+       - one ModelViewer per .product-img-box
+       - IntersectionObserver to pause/resume rendering
+       - hover listeners on the parent .product-card
+       --------------------------------------------------------- */
+    function initProductViewers() {
+      const boxes = document.querySelectorAll('[data-model-viewer]');
+      const viewers = [];
+
+      boxes.forEach((box) => {
+        const canvas = box.querySelector('canvas.model-canvas');
+        if (!canvas) return;
+
+        const viewer = new ModelViewer(box, canvas);
+        viewers.push(viewer);
+
+        const card = box.closest('.product-card');
+        if (card) {
+          card.addEventListener('mouseenter', () => viewer.setHovered(true));
+          card.addEventListener('mouseleave', () => viewer.setHovered(false));
+        }
+      });
+
+      // Pause rendering for any card scrolled out of view; resume
+      // when it scrolls back in. This is the key perf optimization
+      // that keeps many simultaneous WebGL contexts at 60 FPS.
+      const visibilityObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          const idx = Array.from(boxes).indexOf(entry.target);
+          if (idx === -1) return;
+          viewers[idx].setVisible(entry.isIntersecting);
+        });
+      }, { threshold: 0.05 });
+
+      boxes.forEach((box) => visibilityObserver.observe(box));
+
+      // Clean up all WebGL resources if the page unloads.
+      window.addEventListener('beforeunload', () => {
+        viewers.forEach((v) => v.dispose());
       });
     }
+
+    document.addEventListener('DOMContentLoaded', initProductViewers);
   </script>
 </body>
 </html>
