@@ -179,7 +179,7 @@
   .why-choose-us-section {
     margin: 80px 40px;
     padding: 80px 60px;
-    background: var(--white-lux);
+    background: #E8DFCB;
     color: var(--ink);
     border-radius: 12px;
     display: grid;
@@ -478,7 +478,7 @@
 
         <div class="product-card reveal-item" onclick="window.location.href='product-bed.html';">
           <div class="product-3d-wrapper">
-            <div class="product-img-box" data-model-viewer>
+            <div class="product-img-box" data-model-viewer data-model-url="bed-fixed.glb">
               <canvas class="model-canvas" aria-label="Oak Haven Bed Frame 3D preview"></canvas>
             </div>
             <div class="product-info">
@@ -493,12 +493,12 @@
 
         <div class="product-card reveal-item" onclick="window.location.href='product-bed.html';">
           <div class="product-3d-wrapper">
-            <div class="product-img-box" data-model-viewer>
-              <canvas class="model-canvas" aria-label="Heritage Bedside Nightstand 3D preview"></canvas>
+            <div class="product-img-box" data-model-viewer data-model-url="compressed.glb">
+              <canvas class="model-canvas" aria-label="Elegant White Accent Chair 3D preview"></canvas>
             </div>
             <div class="product-info">
-              <h3 class="product-title serif">Heritage Bedside Nightstand</h3>
-              <p class="product-desc">Features a hand-rubbed oil finish, silent under-mount glides, and solid weathered brass hardware.</p>
+              <h3 class="product-title serif">Elegant White Accent Chair</h3>
+              <p class="product-desc">A refined white chair with a modern elegant design, crafted to add comfort and luxury to any interior.</p>
               <div class="product-meta mono">
                 <span class="price">$650</span>
               </div>
@@ -508,7 +508,7 @@
 
         <div class="product-card reveal-item" onclick="window.location.href='product-bed.html';">
           <div class="product-3d-wrapper">
-            <div class="product-img-box" data-model-viewer>
+            <div class="product-img-box" data-model-viewer data-model-url="5626ac6fcb8dcf912f6a8304b1cb7278.glb">
               <canvas class="model-canvas" aria-label="Classic Walnut Dresser 3D preview"></canvas>
             </div>
             <div class="product-info">
@@ -577,29 +577,32 @@
     import { GLTFLoader } from 'https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
     import { MeshoptDecoder } from 'https://unpkg.com/three@0.160.0/examples/jsm/libs/meshopt_decoder.module.js';
 
-    const MODEL_URL = 'compressed.glb';
-    let modelLoadPromise = null;
+    // Cache loaded models per URL so each distinct model is only fetched/parsed once,
+    // while still allowing each product card to reference its own .glb file.
+    const modelLoadPromises = new Map();
 
-    function loadModelOnce() {
-      if (!modelLoadPromise) {
+    function loadModel(url) {
+      if (!modelLoadPromises.has(url)) {
         const loader = new GLTFLoader();
         loader.setMeshoptDecoder(MeshoptDecoder);
-        modelLoadPromise = new Promise((resolve, reject) => {
+        const promise = new Promise((resolve, reject) => {
           loader.load(
-            MODEL_URL,
+            url,
             (gltf) => resolve(gltf.scene),
             undefined,
             (err) => reject(err)
           );
         });
+        modelLoadPromises.set(url, promise);
       }
-      return modelLoadPromise;
+      return modelLoadPromises.get(url);
     }
 
     class ModelViewer {
-      constructor(container, canvas) {
+      constructor(container, canvas, modelUrl) {
         this.container = container;
         this.canvas = canvas;
+        this.modelUrl = modelUrl;
 
         // Slow, ambient rotation — speeds up gently on hover
         this.baseRotationSpeed = 0.09;
@@ -656,7 +659,7 @@
 
       async attachModel() {
         try {
-          const original = await loadModelOnce();
+          const original = await loadModel(this.modelUrl);
           const clone = original.clone(true);
 
           const box = new THREE.Box3().setFromObject(clone);
@@ -682,7 +685,7 @@
           this.scene.add(this.model);
           this.baseScale = scaleFactor;
         } catch (err) {
-          console.error('Failed to load 3D model:', err);
+          console.error(`Failed to load 3D model (${this.modelUrl}):`, err);
         }
       }
 
@@ -760,7 +763,11 @@
         const canvas = box.querySelector('canvas.model-canvas');
         if (!canvas) return;
 
-        const viewer = new ModelViewer(box, canvas);
+        // Each card can point at its own .glb via the data-model-url attribute.
+        // Falls back to compressed.glb if none is specified.
+        const modelUrl = box.dataset.modelUrl || 'compressed.glb';
+
+        const viewer = new ModelViewer(box, canvas, modelUrl);
         viewers.push(viewer);
 
         const card = box.closest('.product-card');
