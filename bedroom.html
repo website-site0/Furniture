@@ -576,6 +576,7 @@
     import * as THREE from 'three';
     import { GLTFLoader } from 'https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
     import { MeshoptDecoder } from 'https://unpkg.com/three@0.160.0/examples/jsm/libs/meshopt_decoder.module.js';
+    import { DRACOLoader } from 'https://unpkg.com/three@0.160.0/examples/jsm/loaders/DRACOLoader.js';
 
     // Cache loaded models per URL so each distinct model is only fetched/parsed once,
     // while still allowing each product card to reference its own .glb file.
@@ -584,7 +585,14 @@
     function loadModel(url) {
       if (!modelLoadPromises.has(url)) {
         const loader = new GLTFLoader();
-        loader.setMeshoptDecoder(MeshoptDecoder);
+
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath(
+  'https://www.gstatic.com/draco/versioned/decoders/1.5.7/'
+);
+
+loader.setDRACOLoader(dracoLoader);
+loader.setMeshoptDecoder(MeshoptDecoder);
         const promise = new Promise((resolve, reject) => {
           loader.load(
             url,
